@@ -1,0 +1,21 @@
+{
+  "name": "polymer-realtime-playground",
+  "version": "0.0.0",
+  "homepage": "https://github.com/sethhoward1988/polymer-realtime-playground",
+  "authors": [
+    "Seth Howard <smiles.seth@gmail.com>"
+  ],
+  "description": "A sample app built on Google Drive Realtime API",
+  "main": "index.html",
+  "moduleType": [
+    "amd"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
