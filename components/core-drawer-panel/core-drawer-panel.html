@@ -67,7 +67,7 @@ To position the drawer to the right, add `rightDrawer` attribute.
 
     <div id="main" _style="left: {{ narrow || rightDrawer ? '0' : drawerWidth }}; right: {{ rightDrawer ? (narrow ? '' : drawerWidth) : '' }};">
       <content select="[main]"></content>
-      <div id="scrim" on-tap="{{togglePanel}}"></div>
+      <!-- <div id="scrim" on-tap="{{togglePanel}}"></div> -->
     </div>
 
     <div id="drawer" _style="width: {{ drawerWidth }}">
@@ -98,7 +98,7 @@ To position the drawer to the right, add `rightDrawer` attribute.
        * @type string
        * @default '256px'
        */
-      drawerWidth: '256px',
+      drawerWidth: '350px',
 
       /**
        * Max-width when the panel changes to narrow layout.
@@ -107,7 +107,7 @@ To position the drawer to the right, add `rightDrawer` attribute.
        * @type string
        * @default '640px'
        */
-      responsiveWidth: '640px',
+      responsiveWidth: '900px',
 
       /**
        * The panel that is being selected. `drawer` for the drawer panel and
@@ -146,7 +146,7 @@ To position the drawer to the right, add `rightDrawer` attribute.
        * @type boolean
        * @default false
        */
-      rightDrawer: false,
+      rightDrawer: true,
 
       /**
        * If true, swipe to open/close the drawer is disabled.
@@ -173,7 +173,7 @@ To position the drawer to the right, add `rightDrawer` attribute.
     edgeSwipeSensitivity: 15,
 
     // Whether the drawer is peeking out from the edge.
-    peeking: false,
+    peeking: true,
 
     // Whether the user is dragging the drawer interactively.
     dragging: false,

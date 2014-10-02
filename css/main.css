@@ -1,11 +1,14 @@
 html,body {
   height: 100%;
-  width: 100%;
   margin: 0;
-  background-color: #E5E5E5;
-  font-family: 'RobotoDraft', sans-serif;
+  background-color: #ffffff;
+  font-family: 'Roboto', sans-serif;
 }
 
-#header-panel {
-	background-color: #3F51B5;
+@media (min-width: 481px) {
+
+}
+
+h1 {
+  font-weight: 100;
 }
