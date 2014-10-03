@@ -1,0 +1,173 @@
+<link rel="import" href="../polymer/polymer.html">
+<link href="../core-animated-pages/core-animated-pages.html" rel="import">
+<link href="../core-animated-pages/transitions/slide-up.html" rel="import">
+<link href="../core-animated-pages/transitions/slide-down.html" rel="import">
+<link href="../core-animated-pages/transitions/list-cascade.html" rel="import">
+<link href="../paper-input/paper-input.html" rel="import">
+<link href="../paper-button/paper-button.html" rel="import">
+<link href="../elements/app-globals.html">
+
+<polymer-element name="create-document" attributes="documentId">
+  <template>
+    <style>
+      :host {
+        width: 100%;
+        height: 100%;
+      }
+
+      core-animated-pages {
+        height: 100%;
+      }
+
+      section {
+        overflow: hidden;
+      }
+
+      .icons {
+        width: 550px;
+        position: absolute;
+        left:calc(50% - 250px);
+        top:calc(50% - 175px);
+      }
+
+      core-icon {
+        cursor: pointer;
+      }
+
+      core-icon:hover {
+        -webkit-transition: all .5s;
+        transition: all .5s;
+        color: #9fa8da;
+      }
+
+      .jumbo {
+        transition: all .5s;
+        -webkit-transition: all .5s;
+        height: 250px;
+        width: 250px;
+        color: white;
+      }
+
+      #panelBackground {
+        width: 100%;
+        height: 100%;
+        background-color: #8c9eff;
+      }
+
+      #panel {
+        background-color: white;
+        width: 400px;
+        height: 300px;
+        margin-top: calc(35% - 150px);
+        margin-left: calc(50% - 200px);
+      }
+
+      .top {
+        color: white;
+        position: relative;
+        height: 100px;
+        background-color: #3f51b5;
+      }
+
+      .top core-icon, h1 {
+        display: inline-block;
+        font-weight: 100;
+      }
+
+      .top h1 {
+        margin: 60px 0 0 20px;
+      }
+
+      .top core-icon:hover {
+        color: white;
+      }
+
+      .top core-icon {
+        vertical-align: top;
+        width: 80px;
+        height: 80px;
+        margin-left: 30px;
+        margin-top: 10px;
+      }
+
+      .bottom {
+        padding: 20px;
+      }
+
+      #back {
+        margin-top: 40px;
+      }
+
+      paper-input {
+        width:350px;
+        margin-top: 10px;
+      }
+
+      paper-button {
+        float: right;
+        margin-top: 30px;
+      }
+
+    </style>
+    <app-globals id="globals"></app-globals>
+      <core-animated-pages id="createPage" selected="{{page}}" transitions="hero-transition slide-up slide-down cross-fade list-cascade" on-core-animated-pages-transition-end="{{complete}}">
+        <section layout vertical>
+          <div class="icons">
+            <core-icon id="createDrive" hero class="jumbo" icon="drive-file" on-click="{{ onCreateDriveDocumentClick }}"></core-icon>
+            <core-icon id="openDrive" class="jumbo" icon="drive" on-click="{{ onOpenDriveDocumentClick }}"></core-icon>
+          </div>
+        </section>
+        <section layout vertical>
+          <div id="panelBackground" hero-id="createDrive" slide-up>
+            <div id="panel">
+              <div flex class="panel">
+                <div class="top">
+                  <h1>New Realtime Document</h1>
+                  <core-icon icon="drive-file" ></core-icon>
+                </div>
+                <div class="bottom">
+                  <paper-input id="name" label="Document Name"></paper-input>
+                  <paper-button label="Create" on-click="{{ createDriveDocument }}" raisedButton></paper-button>
+                  <core-icon id="back" icon="arrow-back" on-click="{{ back }}"></core-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </core-animated-pages>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      ready: function () {
+        this.util = this.$.globals.util;
+      },
+
+      onCreateDriveDocumentClick: function () {
+        this.$.createPage.selected = 1;
+        console.log('Creating drive document');
+      },
+
+      createDriveDocument: function () {
+        var that = this;
+        this.util.createRealtimeFile(this.$.name.value, function (doc) {
+          that.onDocumentCreated();
+          that.util.doc = doc;
+          that.util.model = doc.getModel();
+        });
+      },
+
+      onDocumentCreated: function () {
+        console.log('new document created');
+      },
+
+      onOpenDriveDocumentClick: function () {
+        this.util.openFilePicker();
+      },
+
+      back: function () {
+        this.$.createPage.selected = 0;
+      }
+    });
+  </script>
+</polymer-element>

@@ -1,0 +1,28 @@
+<link rel="import" href="../polymer/polymer.html">
+<polymer-element name="app-globals">
+  <script>
+    (function(Utils){
+      var util = new Utils({
+        initializeModel: function (model) {
+          console.log('model has been initialized')
+        },
+
+        onFileLoaded: function (doc) {
+          console.log('my file has loaded');
+        },
+
+        onAuthComplete: function (authResult) {
+          that.onAuthComplete();
+        },
+
+        clientId: '840867953062.apps.googleusercontent.com'
+      });
+
+      Polymer({
+        ready: function () {
+          this.util = util;
+        }
+      });
+    })(window.Utils);
+  </script>
+</polymer-element>

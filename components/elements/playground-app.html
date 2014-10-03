@@ -1,0 +1,80 @@
+<link rel="import" href="../polymer/polymer.html">
+<link href="../core-animation/core-animation.html" rel="import">
+<link href="../core-animated-pages/core-animated-pages.html" rel="import">
+<link href="../core-animated-pages/transitions/slide-from-right.html" rel="import">
+<link href="../core-icons/core-icons.html" rel="import">
+<link rel="import" href="create-document.html">
+<link rel="import" href="app-globals.html">
+
+<polymer-element name="playground-app">
+  <template>
+    <style>
+      core-animated-pages {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+      }
+
+      section {
+        height: 100%;
+        width: 100%;
+      }
+
+      .authView core-icon {
+        left: calc(50% - 175px);
+        top: calc(50% - 175px);
+      }
+
+      .authView core-icon:hover {
+        -webkit-transition: all .5s;
+        transition: all .5s;
+        color: #9fa8da;
+      }
+
+      core-icon {
+        cursor: pointer;
+      }
+
+      .jumbo {
+        transition: all .5s;
+        -webkit-transition: all .5s;
+        height: 250px;
+        width: 250px;
+        color: white;
+      }
+    </style>
+    <app-globals id="globals"></app-globals>
+    <core-animated-pages id="app" transitions="slide-from-right" >
+      <section class="authView">
+        <core-icon class="jumbo" icon="lock-open"></core-icon>
+      </section>
+      <section class="createView">
+        <create-document documentId="{{ documentId }}"></create-document>
+      </section>
+      <section>
+        
+      </section>
+    </core-animated-pages>
+  </template>
+  <script>
+    
+
+    Polymer({
+      ready: function () {
+        var that = this;
+        this.$.globals.util.options.onAuthComplete = function(){
+          that.onAuthComplete();
+        }
+        this.$.globals.util.authorize();
+      },
+
+      onAuthComplete: function () {
+        console.log('Authorized');
+        this.$.app.selected = 1;
+      }
+    });
+  </script>
+</playground-app>

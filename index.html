@@ -7,12 +7,22 @@
     <!-- CSS -->
     <link rel="stylesheet" href="css/main.css" />
 
+    <!-- JS -->
+    <script type="text/javascript" src="//www.google.com/jsapi"></script>
+    <script type="text/javascript" src="//apis.google.com/js/api.js"></script>
+    <script src="js/realtime-client-utils.js"></script>
+
     <!-- Components -->
     <script src="components/platform/platform.js"></script>
     <link rel="import" href="components/font-roboto/roboto.html">
-    <link rel="import" href="components/realtime-app.html">
+    <link rel="import" href="components/elements/playground-app.html">
+
+    
   </head>
   <body unresolved>
-    <realtime-app document="{{ document }}" touch-action="auto"></realtime-app>
+    <script>
+    console.log('hello');
+    </script>
+    <playground-app></playground-app>
   </body>
 </html>
