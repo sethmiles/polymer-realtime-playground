@@ -3,14 +3,6 @@
   <script>
     (function(Utils){
       var util = new Utils({
-        initializeModel: function (model) {
-          console.log('model has been initialized')
-        },
-
-        onFileLoaded: function (doc) {
-          console.log('my file has loaded');
-        },
-
         onAuthComplete: function (authResult) {
           that.onAuthComplete();
         },

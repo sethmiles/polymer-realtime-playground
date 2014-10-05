@@ -5,7 +5,8 @@
 <link href="../core-animated-pages/transitions/list-cascade.html" rel="import">
 <link href="../paper-input/paper-input.html" rel="import">
 <link href="../paper-button/paper-button.html" rel="import">
-<link href="../elements/app-globals.html">
+<link href="../elements/app-globals.html" rel="import">
+<link href="../core-ajax/core-ajax.html" rel="import">
 
 <polymer-element name="create-document" attributes="documentId">
   <template>
@@ -92,6 +93,18 @@
 
       .bottom {
         padding: 20px;
+        height: 130px;
+        overflow: scroll;
+      }
+
+      .bottom p {
+        padding: 10px;
+      }
+
+      .bottom p:hover {
+        transition: none;
+        color: white;
+        background-color: #3f51b5;
       }
 
       #back {
@@ -134,6 +147,32 @@
             </div>
           </div>
         </section>
+        <section layout vertical>
+          <core-ajax
+            id="driveFilesRequest"
+            url="https://www.googleapis.com/drive/v2/files"
+            params='{"corpus":"DEFAULT", "maxResults":"100"}'
+            handleAs="json"
+            on-core-response="{{handleResponse}}"></core-ajax>
+            <div id="panelBackground" hero-id="createDrive" slide-up>
+            <div id="panel">
+              <div flex class="panel">
+                <div class="top">
+                  <h1>Open Drive File</h1>
+                  <core-icon icon="drive" ></core-icon>
+                </div>
+                <div class="bottom">
+                  <ul>
+                    <template repeat="{{file in files}}">
+                      <li document-id="{{ file.id }}" on-click="{{ onFileClick }}">{{ file.title }}</li>
+                    </template>
+                  </ul>
+                  <core-icon id="back" icon="arrow-back" on-click="{{ back }}"></core-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </core-animated-pages>
     </div>
   </template>
@@ -150,10 +189,9 @@
 
       createDriveDocument: function () {
         var that = this;
-        this.util.createRealtimeFile(this.$.name.value, function (doc) {
-          that.onDocumentCreated();
-          that.util.doc = doc;
-          that.util.model = doc.getModel();
+        this.util.createRealtimeFile(this.$.name.value, function (resp) {
+          that.util.documentId = resp.result.id;
+          that.util.load();
         });
       },
 
@@ -162,11 +200,28 @@
       },
 
       onOpenDriveDocumentClick: function () {
-        this.util.openFilePicker();
+        console.log('Opening Drive Files List');
+        this.$.driveFilesRequest.params = JSON.stringify({
+          corpus: 'DOMAIN',
+          maxResults: 100,
+          access_token: this.util.authorizer.token
+        });
+        this.$.driveFilesRequest.go();
       },
 
       back: function () {
         this.$.createPage.selected = 0;
+      },
+
+      handleResponse: function (resp) {
+        console.log('logging response!', resp);
+        this.files = resp.detail.response.items;
+        this.$.createPage.selected = 2;
+      },
+
+      onFileClick: function (evt) {
+        this.util.documentId = evt.target.attributes.getNamedItem('document-id').value;
+        this.util.load();
       }
     });
   </script>

@@ -55,9 +55,9 @@ Utils.prototype = {
     afterAuth: null // No action.
   },
 
-  installScope: 'https://www.googleapis.com/auth/drive.install',
-
-  fileScope: 'https://www.googleapis.com/auth/drive.file',
+  scopes: ['https://www.googleapis.com/auth/drive.metadata.readonly',
+          'https://www.googleapis.com/auth/drive.install',
+          'https://www.googleapis.com/auth/drive.file'],
 
   openId: 'openid',
 
@@ -127,22 +127,8 @@ Utils.prototype = {
     return function () {
       fn.apply(context, arguments);
     }
-  },
-  // Opens the Google Picker.
-  openFilePicker: function () {
-    var token = gapi.auth.getToken().access_token;
-    var view = new google.picker.View(google.picker.ViewId.DOCS);
-    view.setMimeTypes("application/vnd.google-apps.drive-sdk." + rtpg.realTimeOptions.appId);
-    var picker = new google.picker.PickerBuilder()
-        .enableFeature(google.picker.Feature.NAV_HIDDEN)
-        .setAppId(rtpg.realTimeOptions.appId)
-        .setOAuthToken(token)
-        .addView(view)
-        .addView(new google.picker.DocsUploadView())
-        .setCallback(rtpg.openCallback)
-        .build();
-    picker.setVisible(true);
   }
+  
 }
 
 
@@ -151,6 +137,7 @@ Utils.prototype = {
 Authorizer = function (util) {
   this.util = util;
   this.handleAuthResult = this.util.bind(this.handleAuthResult, this);
+  this.token = null;
 }
 
 Authorizer.prototype = {
@@ -165,11 +152,7 @@ Authorizer.prototype = {
     // Try with no popups first.
     window.gapi.auth.authorize({
       client_id: this.util.options.clientId,
-      scope: [
-        this.util.installScope,
-        this.util.fileScope,
-        this.util.openId
-      ],
+      scope: this.util.scopes,
       user_id: this.util.options.userId,
       immediate: !usePopup
     }, this.handleAuthResult);
@@ -177,6 +160,7 @@ Authorizer.prototype = {
 
   handleAuthResult: function (authResult) {
     if (authResult && !authResult.error) {
+      this.token = authResult.access_token;
       this.util.onAuthComplete(authResult);
       this.util.options.onAuthComplete(authResult);
     } else {
