@@ -225,6 +225,7 @@
         this.$.driveFileMetadataRequest.params = JSON.stringify({
           access_token: this.util.authorizer.token
         });
+        this.eventsList = [];
         this.$.driveFileMetadataRequest.go();
       },
 
@@ -242,6 +243,9 @@
       },
 
       onCollaborativeStringEvent: function (evt) {
+        if(this.eventsList > 100){
+          this.eventsList.pop();
+        }
         this.eventsList.unshift(evt);
         this.collaborativeString = this.stringDemo.getText();
       },
@@ -261,6 +265,7 @@
         });
         this.$.drawer.selected = 0;
         this.$.main.selected = 0;
+        this.shadowRoot.querySelector('core-drawer-panel').closeDrawer();
       },
 
       undo: function () {
