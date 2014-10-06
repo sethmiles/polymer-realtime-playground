@@ -1,0 +1,276 @@
+<link rel="import" href="../polymer/polymer.html">
+<link href="../core-animated-pages/core-animated-pages.html" rel="import">
+<link href="../core-drawer-panel/core-drawer-panel.html" rel="import">
+<link href="../paper-radio-group/paper-radio-group.html" rel="import">
+<link href="../paper-radio-button/paper-radio-button.html" rel="import">
+<link href="../paper-shadow/paper-shadow.html" rel="import">
+<link href="demo-card.html" rel="import">
+<link href="event-card.html" rel="import">
+<link href="collaborator-element.html" rel="import">
+<link href="../core-icon-button/core-icon-button.html" rel="import">
+<link href="../core-animated-pages/core-animated-pages.html" rel="import">
+<link href="../core-animated-pages/transitions/list-cascade.html" rel="import">
+<link href="../core-animated-pages/transitions/cross-fade.html" rel="import">
+<link href="../core-animated-pages/transitions/slide-up.html" rel="import">
+
+<polymer-element name="realtime-demos" attributes="document documentTitle documentId">
+  <template>
+    <link href="realtime-demos.css" rel="stylesheet">
+    <app-globals id="globals"></app-globals>
+    <core-ajax
+            id="driveFileMetadataRequest"
+            url="https://www.googleapis.com/drive/v2/files/{{ documentId }}"
+            params='{}'
+            handleAs="json"
+            on-core-response="{{handleResponse}}"></core-ajax>
+        <core-drawer-panel>
+            <div drawer class="drawer">
+              <core-animated-pages id="drawer" selected="{{ page }}" transitions="cross-fade list-cascade" on-core-animated-pages-transition-end="{{complete}}">
+                <section></section>
+                <section>
+                  <div list-cascade>
+                    <div class="controls">
+                      <div class="drawer-title">Controls</div>
+                      <div class="controls-container">
+                        <core-icon-button icon="arrow-back" on-click="{{ back }}"></core-icon-button>
+                        <core-icon-button icon="open-in-new" on-click="{{ openInNewTab }}"></core-icon-button>
+                        <core-icon-button icon="rotate-left" on-click="{{ undo }}"></core-icon-button>
+                        <core-icon-button icon="rotate-right" on-click="{{ redo }}"></core-icon-button>
+                      </div>
+                    </div>
+                    <div class="collaborators">
+                      <div class="drawer-title">Active Collaborators</div>
+                      <div class="collaborator-container">
+                        <template repeat="{{ collaborator in collaborators }}">
+                          <collaborator-element collaborator="{{ collaborator }}"></collaborator-element>
+                        </template>
+                      </div>
+                    </div>
+                    <div class="events">
+                      <div class="drawer-title">Events</div>
+                      <div class="events-container">
+                        <template repeat="{{event in eventsList}}">
+                          <event-card event="{{event}}"></event-card>
+                        </template>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </core-animated-pages>
+            </div>
+          <div main class="main">
+            <div class="blue-bg">
+              <div class="doc-title">
+                {{ documentTitle }}
+              </div>
+            </div>
+            <core-animated-pages id="main" selected="{{ page }}" transitions="cross-fade list-cascade" on-core-animated-pages-transition-end="{{complete}}">
+              <section></section>
+              <section>
+                <div class="container" list-cascade>
+                  
+                  <!-- Collaborative String Demo -->
+                  <demo-card id="string"
+                    title="Collaborative String"
+                    color="blue"
+                    description="Collaborative strings are just like normal strings, except that all browser sessions will be notified and updated when the string changes. Events are fired when strings are inserted to the collaborative string or when part of the string is deleted.">
+                      <paper-input id="stringInput" value="{{ collaborativeString }}" on-keyup="{{ onCollaborativeStringKeyup }}" label="type something..."></paper-input>
+                  </demo-card>
+
+                  <!-- Collaborative List Demo -->
+                  <demo-card id="list"
+                    title="Collaborative List"
+                    color="purple"
+                    description="A collaborative list state is shared across sessions. Events are fired when items are added or removed to the list or when an existig item's value is set.">
+                    <div class="left">
+                      <div class="list-title">List Items</div>
+                      <paper-radio-group selected="small">
+                        <paper-radio-button name="item1" label="item1"></paper-radio-button>
+                        <paper-radio-button name="item2" label="item2"></paper-radio-button>
+                        <paper-radio-button name="item3" label="item3"></paper-radio-button>
+                        <paper-radio-button name="item4" label="item4"></paper-radio-button>
+                      </paper-radio-group>
+                    </div>
+                    <div class="right">
+                      <table>
+                        <tr>
+                          <td><paper-button raised>Remove Selected Item</paper-button></td>
+                        </tr>
+                        <tr>
+                          <td><paper-button raised>Add Item</paper-button></td>
+                          <td><paper-input flex label="item name..."></paper-input></td>
+                        </tr>
+                        <tr>
+                          <td><paper-button raised>Clear List</paper-button></td>
+                        </tr>
+                        <tr>
+                          <td><paper-button raised>Set Selected Item</paper-button></td>
+                          <td><paper-input label="item name..."></paper-input></td>
+                        </tr>
+                        <tr>
+                          <td><paper-button raised>Move Item To Index</paper-button></td>
+                          <td><paper-input label="new index..."></paper-input></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </demo-card>
+
+                  <!-- Collaborative Map Demo -->
+                  <demo-card id="map"
+                    title="Collaborative Map"
+                    color="green"
+                    description="Collaborative maps share key/value state across sessions. They support standard map operations. Events are fired when key-value pairs are changed.">
+                    <div class="left">
+                      <table>
+                        <tr>
+                          <th>Keys</th>
+                          <th>Values</th>
+                        </tr>
+                        <tr>
+                          <td>Sample Key</td>
+                          <td>Sample Value</td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="right">
+                      <table>
+                        <tr>
+                          <td><paper-button raised>Remove Selected Item</paper-button></td>
+                        </tr>
+                        <tr>
+                          <td><paper-button raised>Clear List</paper-button></td>
+                        </tr>
+                        <tr>
+                          <td><paper-button raised>Add Pair</paper-button></td>
+                          <td><paper-input flex label="key..."></paper-input></td>
+                        </tr>
+                        <tr>
+                          <td></td>
+                          <td><paper-input flex label="value..."></paper-input></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </demo-card>
+
+                  <!-- Custom Object Demo -->
+                  <demo-card id="custom"
+                    title="Custom Objects"
+                    color="yellow"
+                    description="Collaborative custom object have properties who's state is shared across sessions. Events are fired when property values are changed.">
+                    <table>
+                      <tr>
+                        <th>Properties</th>
+                        <th>Values</th>
+                      </tr>
+                      <tr>
+                        <td>Name</td>
+                        <td><paper-input flex label="name..."></paper-input></td>
+                      </tr>
+                      <tr>
+                        <td>Director</td>
+                        <td><paper-input flex label="director..."></paper-input></td>
+                      </tr>
+                      <tr>
+                        <td>Notes</td>
+                        <td><paper-input flex label="notes..."></paper-input></td>
+                      </tr>
+                      <tr>
+                        <td>Rating</td>
+                        <td><paper-input flex label="rating..."></paper-input></td>
+                      </tr>
+                    </table>
+                  </demo-card>
+                </div>
+              </section>
+            </core-animated-pages>
+          </div>
+        </core-drawer-panel>
+      </section>
+    </core-animated-pages>
+  </template>
+  <script>
+    Polymer({
+      ready: function () {
+        console.log(this);
+        this.util = this.$.globals.util;
+        this.onCollaborativeStringEvent = this.util.bind(this.onCollaborativeStringEvent, this);
+        this.eventsList = [];
+        this.$.drawer.selected = 0;
+        this.$.main.selected = 0;
+        this.document = null;
+        this.documentTitle = "loading . . ."
+      },
+
+      documentChanged: function (evt, doc) {
+        this.doc = doc;
+        this.collaborators = doc.getCollaborators();
+
+        this.stringDemo = doc.getModel().getRoot().get('demo_string');
+        this.listDemo = doc.getModel().getRoot().get('demo_list');
+        this.cursorsDemo = doc.getModel().getRoot().get('demo_cursors');
+        this.mapDemo = doc.getModel().getRoot().get('demo_map');
+        this.customDemo = doc.getModel().getRoot().get('demo_custom');
+        this.setCollaborativeString();
+        this.$.drawer.selected = 1;
+        this.$.main.selected = 1;
+
+      },
+
+      setEvents: function () {
+        
+      },
+
+      documentIdChanged: function (evt, id) {
+        console.log('the document id has changed!');
+        this.$.driveFileMetadataRequest.params = JSON.stringify({
+          access_token: this.util.authorizer.token
+        });
+        this.$.driveFileMetadataRequest.go();
+      },
+
+      handleResponse: function (resp) {
+        this.documentTitle = resp.detail.response.title;
+      },
+
+
+      // Collaborative String Methods
+      setCollaborativeString: function () {
+        // Collaborative String Listeners
+        this.stringDemo.addEventListener(gapi.drive.realtime.EventType.TEXT_INSERTED, this.onCollaborativeStringEvent);
+        this.stringDemo.addEventListener(gapi.drive.realtime.EventType.TEXT_DELETED, this.onCollaborativeStringEvent);
+        this.collaborativeString = this.stringDemo.getText();
+      },
+
+      onCollaborativeStringEvent: function (evt) {
+        this.eventsList.unshift(evt);
+        this.collaborativeString = this.stringDemo.getText();
+      },
+
+      onCollaborativeStringKeyup: function (evt) {
+        this.stringDemo.setText(this.$.stringInput.inputValue);
+      },
+
+      openInNewTab: function () {
+        var url = window.location.origin + '/#' + this.documentId;
+        window.open(url, '_blank');
+      },
+
+      back: function () {
+        this.fire('core-signal', { 
+          name:'back'
+        });
+        this.$.drawer.selected = 0;
+        this.$.main.selected = 0;
+      },
+
+      undo: function () {
+        this.doc.getModel().undo();
+      },
+
+      redo: function () {
+        this.doc.getModel().redo();
+      }
+
+    });
+  </script>
+</polymer-element>

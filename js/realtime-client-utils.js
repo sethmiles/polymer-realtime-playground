@@ -12,13 +12,6 @@ Utils.prototype = {
     clientId: null,
 
     /**
-     * Function to be called when a Realtime model is first created.
-     */
-    initializeModel: function (model) {
-      this.model = model;
-    },
-
-    /**
      * Autocreate files right after auth automatically.
      */
     autoCreate: false,
@@ -32,22 +25,6 @@ Utils.prototype = {
      * The MIME type of newly created Drive Files.
      */
     newFileMimeType: 'application/vnd.google-apps.drive-sdk',
-
-    /**
-     * Function to be called every time a Realtime file is loaded.
-     */
-    onFileLoaded: function (doc) {
-      this.doc = doc;
-    },
-
-    onAuthComplete: function () {
-      console.log('Authentication Completed');
-    },
-
-    /**
-     * Function to be called to inityalize custom Collaborative Objects types.
-     */
-    registerTypes: null, // No action.
 
     /**
      * Function to be called after authorization and before loading files.
@@ -65,11 +42,10 @@ Utils.prototype = {
     this.mergeOptions(options);
     this.authorizer = new Authorizer(this);
     this.createRealtimeFile = this.bind(this.createRealtimeFile, this);
-    this.getParams();
   },
 
-  authorize: function () {
-    this.authorizer.start();
+  authorize: function (onAuthComplete) {
+    this.authorizer.start(onAuthComplete);
   },
 
   mergeOptions: function (options) {
@@ -79,14 +55,14 @@ Utils.prototype = {
   },
 
   // Check the url to see if we have a document id
-  getParams: function() {
+  getDocumentIdFromUrl: function() {
     var params = {};
     var hashFragment = window.location.hash;
     if(hashFragment){
-      this.documentId = hashFragment.replace('#','');
-    } else {
-      this.documentId = false;
+      return hashFragment.replace('#','');
     }
+    
+    return false;
   },
 
   createRealtimeFile: function(title, callback) {
@@ -101,14 +77,8 @@ Utils.prototype = {
     });
   },
 
-  load: function() {
-    window.gapi.drive.realtime.load(this.documentId, this.options.onFileLoaded, this.options.initializeModel, this.onError);
-  },
-
-  onAuthComplete: function (authResult) {
-    if(this.documentId){
-      this.load();
-    }
+  load: function(documentId, onFileLoaded, initializeModel) {
+    window.gapi.drive.realtime.load(documentId, onFileLoaded, initializeModel, this.onError);
   },
 
   onError: function(e) {
@@ -141,14 +111,15 @@ Authorizer = function (util) {
 }
 
 Authorizer.prototype = {
-  start: function() {
+  start: function(onAuthComplete) {
     var that = this;
     window.gapi.load('auth:client,drive-realtime,drive-share', function() {
-      that.authorize(false);
+      that.authorize(false, onAuthComplete);
     });
   },
 
-  authorize: function (usePopup) {
+  authorize: function (usePopup, onAuthComplete) {
+    this.onAuthComplete = onAuthComplete;
     // Try with no popups first.
     window.gapi.auth.authorize({
       client_id: this.util.options.clientId,
@@ -161,8 +132,7 @@ Authorizer.prototype = {
   handleAuthResult: function (authResult) {
     if (authResult && !authResult.error) {
       this.token = authResult.access_token;
-      this.util.onAuthComplete(authResult);
-      this.util.options.onAuthComplete(authResult);
+      this.onAuthComplete(authResult);
     } else {
       this.authorize(true);
     }

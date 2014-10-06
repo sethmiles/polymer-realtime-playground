@@ -1,0 +1,42 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<polymer-element name="event-card" attributes="event">
+  <template>
+  <style>
+    :host {
+      width: 90%;
+      margin-left: 5%;
+      margin-top: 10px;
+      background-color: #ffffff;
+      display: block;
+    }
+
+    .content {
+      padding: 5px;
+      font-weight: 100;
+      padding: 10px;
+    }
+
+  </style>
+    <div class="container">
+      <paper-shadow z="1"></paper-shadow>
+      <div class="content">
+        {{ eventString }}
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      ready: function () {
+        switch(this.event.type){
+          case gapi.drive.realtime.EventType.TEXT_INSERTED:
+            this.eventString = "'" + this.event.text + "' was inserted at index " + this.event.index + ".";
+            break;
+          case gapi.drive.realtime.EventType.TEXT_DELETED:
+            this.eventString = "'" + this.event.text + "' was removed at index " + this.event.index + ".";
+            break;
+        }
+      }
+    });
+  </script>
+</polymer-element>
