@@ -7,6 +7,7 @@
 <link href="../paper-button/paper-button.html" rel="import">
 <link href="../elements/app-globals.html" rel="import">
 <link href="../core-ajax/core-ajax.html" rel="import">
+<link href="../paper-progress/paper-progress.html" rel="import">
 
 <polymer-element name="create-document">
   <template>
@@ -16,10 +17,10 @@
         <section layout vertical>
           <div class="icons">
             <core-icon id="createDrive" hero class="jumbo" icon="note-add" on-click="{{ onCreateDriveDocumentClick }}"></core-icon>
-            <core-icon id="openDrive" class="jumbo" icon="drive" on-click="{{ onOpenDriveDocumentClick }}"></core-icon>
+            <core-icon id="openDrive" hero class="jumbo" icon="drive" on-click="{{ onOpenDriveDocumentClick }}"></core-icon>
           </div>
         </section>
-        <section layout vertical>
+        <section id="create" layout vertical>
           <div id="panelBackground" hero-id="createDrive" slide-up>
             <div id="panel">
               <div flex class="panel">
@@ -28,22 +29,24 @@
                   <core-icon icon="drive-file" ></core-icon>
                 </div>
                 <div class="bottom">
+                  <div id="loader1" class="hidden"></div>
                   <paper-input id="name" label="Document Name"></paper-input>
-                  <paper-button label="Create" on-click="{{ createDriveDocument }}" raisedButton></paper-button>
-                  <core-icon id="back" icon="arrow-back" on-click="{{ back }}"></core-icon>
+                  <paper-button id="create" label="Create" on-click="{{ createDriveDocument }}" raisedButton></paper-button>
                 </div>
               </div>
+              <core-icon id="back" icon="arrow-back" on-click="{{ back }}"></core-icon>
             </div>
           </div>
         </section>
-        <section layout vertical>
+        <section id="load" layout vertical>
           <core-ajax
             id="driveFilesRequest"
             url="https://www.googleapis.com/drive/v2/files"
             params='{"corpus":"DEFAULT", "maxResults":"100"}'
             handleAs="json"
-            on-core-response="{{handleResponse}}"></core-ajax>
-            <div id="panelBackground" hero-id="createDrive" slide-up>
+            on-core-response="{{handleResponse}}">
+          </core-ajax>
+          <div id="panelBackground" hero-id="createDrive" slide-up>
             <div id="panel">
               <div flex class="panel">
                 <div class="top">
@@ -51,13 +54,14 @@
                   <core-icon icon="drive" ></core-icon>
                 </div>
                 <div class="bottom">
+                  <div id="loader2"></div>
                   <ul>
                     <template repeat="{{file in files}}">
                       <li document-id="{{ file.id }}" on-click="{{ onFileClick }}">{{ file.title }}</li>
                     </template>
                   </ul>
-                  <core-icon id="back" icon="arrow-back" on-click="{{ back }}"></core-icon>
                 </div>
+                <core-icon id="back" icon="arrow-back" on-click="{{ back }}"></core-icon>
               </div>
             </div>
           </div>
@@ -69,8 +73,9 @@
     Polymer({
       ready: function () {
         this.util = this.$.globals.util;
-        this.onFileLoaded = this.util.bind(this.onFileLoaded, this);
-        this.onInitialize = this.util.bind(this.onInitialize, this);
+        this.Movie = this.$.globals.Movie;
+        this.onFileLoaded = this.onFileLoaded.bind(this);
+        this.onInitialize = this.onInitialize.bind(this);
       },
 
       onCreateDriveDocumentClick: function () {
@@ -80,12 +85,14 @@
 
       createDriveDocument: function () {
         var that = this;
+        this.$.create.disabled = true;
         this.documentTitle = this.$.name.value;
+        this.$.loader1.classList.remove('hidden');
         this.util.createRealtimeFile(this.documentTitle, function (resp) {
-          this.documentId = resp.result.id;
+          that.documentId = resp.result.id;
           that.util.load(that.documentId, that.onFileLoaded, that.onInitialize);
         });
-        this.$.createPage.selected = 0;
+        
       },
 
       onOpenDriveDocumentClick: function () {
@@ -95,7 +102,10 @@
           maxResults: 100,
           access_token: this.util.authorizer.token
         });
+        this.files = [];
+        this.$.loader2.classList.remove('hidden');
         this.$.driveFilesRequest.go();
+        this.$.createPage.selected = 2;
       },
 
       back: function () {
@@ -104,8 +114,14 @@
 
       handleResponse: function (resp) {
         console.log('logging response!', resp);
-        this.files = resp.detail.response.items;
-        this.$.createPage.selected = 2;
+        this.files = [];
+        var items = resp.detail.response.items;
+        for(var i = 0; i < items.length; i++){
+          if(items[i].mimeType.indexOf(this.util.options.mimeType) == 0 && !items[i].labels.trashed && !items[i].labels.hidden){
+            this.files.push(items[i]);
+          }
+        }
+        this.$.loader2.classList.add('hidden');
       },
 
       onFileClick: function (evt) {
@@ -116,6 +132,10 @@
       },
 
       onFileLoaded: function (doc) {
+        this.$.createPage.selected = 0;
+        this.$.loader1.classList.add('hidden');
+        this.$.name.value = '';
+        this.$.create.disabled = false;
         this.fire('core-signal', { 
           name:'file-loaded', 
           data: { 
@@ -124,6 +144,7 @@
             documentId: this.documentId
           }
         });
+
       },
 
       onInitialize: function (model) {

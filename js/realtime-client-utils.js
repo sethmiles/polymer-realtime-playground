@@ -24,7 +24,7 @@ Utils.prototype = {
     /**
      * The MIME type of newly created Drive Files.
      */
-    newFileMimeType: 'application/vnd.google-apps.drive-sdk',
+    mimeType: 'application/vnd.google-apps.drive-sdk',
 
     /**
      * Function to be called after authorization and before loading files.
@@ -41,7 +41,7 @@ Utils.prototype = {
   init: function (options) {
     this.mergeOptions(options);
     this.authorizer = new Authorizer(this);
-    this.createRealtimeFile = this.bind(this.createRealtimeFile, this);
+    this.createRealtimeFile = this.createRealtimeFile.bind(this);
   },
 
   authorize: function (onAuthComplete) {
@@ -70,7 +70,7 @@ Utils.prototype = {
     window.gapi.client.load('drive', 'v2', function() {
       window.gapi.client.drive.files.insert({
         'resource': {
-          mimeType: that.options.newFileMimeType,
+          mimeType: that.options.mimeType,
           title: title
         }
       }).execute(callback);
@@ -91,12 +91,6 @@ Utils.prototype = {
       alert("The file was not found. It does not exist or you do not have read access to the file.");
       window.location.href= "/";
     }
-  },
-
-  bind: function (fn, context) {
-    return function () {
-      fn.apply(context, arguments);
-    }
   }
   
 }
@@ -106,7 +100,7 @@ Utils.prototype = {
 
 Authorizer = function (util) {
   this.util = util;
-  this.handleAuthResult = this.util.bind(this.handleAuthResult, this);
+  this.handleAuthResult = this.handleAuthResult.bind(this);
   this.token = null;
 }
 

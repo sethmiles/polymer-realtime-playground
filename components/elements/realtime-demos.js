@@ -57,7 +57,7 @@ Polymer({
 
       // Collaborator Methods
       setupCollaborators: function () {
-        this.onCollaboratorChange = this.util.bind(this.onCollaboratorChange, this);
+        this.onCollaboratorChange = this.onCollaboratorChange.bind(this);
         this.doc.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_JOINED, this.onCollaboratorChange);
         this.doc.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_LEFT, this.onCollaboratorChange);
       },
@@ -70,7 +70,7 @@ Polymer({
 
       // Collaborative String Methods
       setupCollaborativeString: function () {
-        this.onCollaborativeStringEvent = this.util.bind(this.onCollaborativeStringEvent, this);
+        this.onCollaborativeStringEvent = this.onCollaborativeStringEvent.bind(this);
         this.stringDemo.addEventListener(gapi.drive.realtime.EventType.TEXT_INSERTED, this.onCollaborativeStringEvent);
         this.stringDemo.addEventListener(gapi.drive.realtime.EventType.TEXT_DELETED, this.onCollaborativeStringEvent);
         this.collaborativeString = this.stringDemo.getText();
