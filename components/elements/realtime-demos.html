@@ -34,8 +34,9 @@
                       <div class="controls-container">
                         <core-icon-button icon="arrow-back" on-click="{{ back }}"></core-icon-button>
                         <core-icon-button icon="open-in-new" on-click="{{ openInNewTab }}"></core-icon-button>
-                        <core-icon-button icon="rotate-left" on-click="{{ undo }}"></core-icon-button>
-                        <core-icon-button icon="rotate-right" on-click="{{ redo }}"></core-icon-button>
+                        <core-icon-button icon="account-child" on-click="{{ share }}"></core-icon-button>
+                        <core-icon-button icon="rotate-left" disabled?="{{ canUndo == false }}" on-click="{{ undo }}"></core-icon-button>
+                        <core-icon-button icon="rotate-right" disabled?="{{ canRedo == false }}" on-click="{{ redo }}"></core-icon-button>
                       </div>
                     </div>
                     <div class="collaborators">
@@ -84,32 +85,31 @@
                     description="A collaborative list state is shared across sessions. Events are fired when items are added or removed to the list or when an existig item's value is set.">
                     <div class="left">
                       <div class="list-title">List Items</div>
-                      <paper-radio-group selected="small">
-                        <paper-radio-button name="item1" label="item1"></paper-radio-button>
-                        <paper-radio-button name="item2" label="item2"></paper-radio-button>
-                        <paper-radio-button name="item3" label="item3"></paper-radio-button>
-                        <paper-radio-button name="item4" label="item4"></paper-radio-button>
+                      <paper-radio-group selected="{{ selectedItem }}" on-change="{{ onRadioGroupChange }}">
+                        <template repeat="{{ listItem in collaborativeList }}">
+                          <paper-radio-button name="{{ listItem }}" label="{{ listItem }}"></paper-radio-button>
+                        </template>
                       </paper-radio-group>
                     </div>
                     <div class="right">
                       <table>
                         <tr>
-                          <td><paper-button raised>Remove Selected Item</paper-button></td>
+                          <td><paper-button raised on-click="{{ onRemoveListItemClick }}" disabled?="{{ !selectedItem }}">Remove Selected Item</paper-button></td>
                         </tr>
                         <tr>
-                          <td><paper-button raised>Add Item</paper-button></td>
-                          <td><paper-input flex label="item name..."></paper-input></td>
+                          <td><paper-button raised on-click="{{ onAddListItemClick }}" disabled?="{{ addItemValue.length == 0 }}">Add Item</paper-button></td>
+                          <td><paper-input id="addListItemInput" label="item name..." inputValue="{{ addItemValue }}"></paper-input></td>
                         </tr>
                         <tr>
-                          <td><paper-button raised>Clear List</paper-button></td>
+                          <td><paper-button raised on-click="{{ onClearListClick }}" disabled?="{{ collaborativeList.length == 0 }}">Clear List</paper-button></td>
                         </tr>
                         <tr>
-                          <td><paper-button raised>Set Selected Item</paper-button></td>
-                          <td><paper-input label="item name..."></paper-input></td>
+                          <td><paper-button raised on-click="{{ onSetListItemClick }}" disabled?="{{ setItemValue.length == 0 }}">Set Selected Item</paper-button></td>
+                          <td><paper-input id="setListItemInput" label="item name..." inputValue="{{ setItemValue }}"></paper-input></td>
                         </tr>
                         <tr>
-                          <td><paper-button raised>Move Item To Index</paper-button></td>
-                          <td><paper-input label="new index..."></paper-input></td>
+                          <td><paper-button raised on-click="{{ onMoveListItemClick }}" disabled?="{{ moveItemValue.length == 0 }}">Move Item To Index</paper-button></td>
+                          <td><paper-input id="moveListItemInput" label="new index..." inputValue="{{ moveItemValue }}"></paper-input></td>
                         </tr>
                       </table>
                     </div>
@@ -121,32 +121,38 @@
                     color="green"
                     description="Collaborative maps share key/value state across sessions. They support standard map operations. Events are fired when key-value pairs are changed.">
                     <div class="left">
-                      <table>
-                        <tr>
-                          <th>Keys</th>
-                          <th>Values</th>
-                        </tr>
-                        <tr>
-                          <td>Sample Key</td>
-                          <td>Sample Value</td>
-                        </tr>
+                      <table class="map-display">
+                        <thead>
+                          <tr>
+                            <th>Keys</th>
+                            <th>Values</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <template repeat="{{ mapItem in collaborativeMap }}">
+                            <tr id="mapItem-{{ mapItem.key }}" class="{{ mapItem.key == selectedMapItemKey ? 'active' : '' }}" on-click="{{ onMapItemClick }}">
+                              <td class="mapKey">{{ mapItem.key }}</td>
+                              <td class="mapValue">{{ mapItem.value }}</td>
+                            </tr>
+                          </template>
+                        </tbody>
                       </table>
                     </div>
                     <div class="right">
                       <table>
                         <tr>
-                          <td><paper-button raised>Remove Selected Item</paper-button></td>
+                          <td><paper-button raised on-click="{{ onRemoveMapItemClick }}" disabled?="{{ !selectedMapItemKey }}">Remove Selected Item</paper-button></td>
                         </tr>
                         <tr>
-                          <td><paper-button raised>Clear List</paper-button></td>
+                          <td><paper-button raised on-click="{{ onClearMapClick }}" disabled?="{{ collaborativeMap.length == 0 }}">Clear List</paper-button></td>
                         </tr>
                         <tr>
-                          <td><paper-button raised>Add Pair</paper-button></td>
-                          <td><paper-input flex label="key..."></paper-input></td>
+                          <td><paper-button raised on-click="{{ onAddMapItemClick }}" disabled?="{{ !addMapKeyValue.length && !addMapValue.length }}">Add Pair</paper-button></td>
+                          <td><paper-input id="addMapKeyInput" inputValue="{{ addMapKeyValue }}" label="key..."></paper-input></td>
                         </tr>
                         <tr>
                           <td></td>
-                          <td><paper-input flex label="value..."></paper-input></td>
+                          <td><paper-input id="addMapValueInput" inputValue="{{ addMapValue }}" label="value..."></paper-input></td>
                         </tr>
                       </table>
                     </div>
@@ -158,26 +164,30 @@
                     color="yellow"
                     description="Collaborative custom object have properties who's state is shared across sessions. Events are fired when property values are changed.">
                     <table>
-                      <tr>
-                        <th>Properties</th>
-                        <th>Values</th>
-                      </tr>
-                      <tr>
-                        <td>Name</td>
-                        <td><paper-input flex label="name..."></paper-input></td>
-                      </tr>
-                      <tr>
-                        <td>Director</td>
-                        <td><paper-input flex label="director..."></paper-input></td>
-                      </tr>
-                      <tr>
-                        <td>Notes</td>
-                        <td><paper-input flex label="notes..."></paper-input></td>
-                      </tr>
-                      <tr>
-                        <td>Rating</td>
-                        <td><paper-input flex label="rating..."></paper-input></td>
-                      </tr>
+                      <thead>
+                        <tr>
+                          <th>Properties</th>
+                          <th>Values</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Name</td>
+                          <td><paper-input id="customNameInput" on-keyup="{{ onNameKeyup }}" label="name..." value="{{ name }}"></paper-input></td>
+                        </tr>
+                        <tr>
+                          <td>Director</td>
+                          <td><paper-input id="customDirectorInput" on-keyup="{{ onDirectorKeyup }}" label="director..." value="{{ director }}"></paper-input></td>
+                        </tr>
+                        <tr>
+                          <td>Notes</td>
+                          <td><paper-input id="customNotesInput" on-keyup="{{ onNotesKeyup }}" label="notes..." value="{{ notes }}"></paper-input></td>
+                        </tr>
+                        <tr>
+                          <td>Rating</td>
+                          <td><paper-input id="customRatingInput" on-keyup="{{ onRatingKeyup }}" label="rating..." value="{{ rating }}"></paper-input></td>
+                        </tr>
+                      </tbody>
                     </table>
                   </demo-card>
                 </div>
@@ -188,94 +198,5 @@
       </section>
     </core-animated-pages>
   </template>
-  <script>
-    Polymer({
-      ready: function () {
-        console.log(this);
-        this.util = this.$.globals.util;
-        this.onCollaborativeStringEvent = this.util.bind(this.onCollaborativeStringEvent, this);
-        this.eventsList = [];
-        this.$.drawer.selected = 0;
-        this.$.main.selected = 0;
-        this.document = null;
-        this.documentTitle = "loading . . ."
-      },
-
-      documentChanged: function (evt, doc) {
-        this.doc = doc;
-        this.collaborators = doc.getCollaborators();
-
-        this.stringDemo = doc.getModel().getRoot().get('demo_string');
-        this.listDemo = doc.getModel().getRoot().get('demo_list');
-        this.cursorsDemo = doc.getModel().getRoot().get('demo_cursors');
-        this.mapDemo = doc.getModel().getRoot().get('demo_map');
-        this.customDemo = doc.getModel().getRoot().get('demo_custom');
-        this.setCollaborativeString();
-        this.$.drawer.selected = 1;
-        this.$.main.selected = 1;
-
-      },
-
-      setEvents: function () {
-        
-      },
-
-      documentIdChanged: function (evt, id) {
-        console.log('the document id has changed!');
-        this.$.driveFileMetadataRequest.params = JSON.stringify({
-          access_token: this.util.authorizer.token
-        });
-        this.eventsList = [];
-        this.$.driveFileMetadataRequest.go();
-      },
-
-      handleResponse: function (resp) {
-        this.documentTitle = resp.detail.response.title;
-      },
-
-
-      // Collaborative String Methods
-      setCollaborativeString: function () {
-        // Collaborative String Listeners
-        this.stringDemo.addEventListener(gapi.drive.realtime.EventType.TEXT_INSERTED, this.onCollaborativeStringEvent);
-        this.stringDemo.addEventListener(gapi.drive.realtime.EventType.TEXT_DELETED, this.onCollaborativeStringEvent);
-        this.collaborativeString = this.stringDemo.getText();
-      },
-
-      onCollaborativeStringEvent: function (evt) {
-        if(this.eventsList > 100){
-          this.eventsList.pop();
-        }
-        this.eventsList.unshift(evt);
-        this.collaborativeString = this.stringDemo.getText();
-      },
-
-      onCollaborativeStringKeyup: function (evt) {
-        this.stringDemo.setText(this.$.stringInput.inputValue);
-      },
-
-      openInNewTab: function () {
-        var url = window.location.origin + '/#' + this.documentId;
-        window.open(url, '_blank');
-      },
-
-      back: function () {
-        this.fire('core-signal', { 
-          name:'back'
-        });
-        this.$.drawer.selected = 0;
-        this.$.main.selected = 0;
-        this.shadowRoot.querySelector('core-drawer-panel').closeDrawer();
-      },
-
-      undo: function () {
-        this.doc.getModel().undo();
-      },
-
-      redo: function () {
-        this.doc.getModel().redo();
-      }
-
-    });
-  </script>
+  <script src="realtime-demos.js"></script>
 </polymer-element>

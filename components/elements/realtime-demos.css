@@ -103,6 +103,18 @@
   padding: 5px;
 }
 
+#map table.map-display tr.active, #map table tbody tr.active:hover {
+  color: #fff;
+  background-color: #259b24;
+  transition: all .2s;
+}
+
+#map table.map-display tbody tr:hover {
+  transition: all .2s;
+  cursor: pointer;
+  background-color: #a3e9a4;
+}
+
 
 /* Custom Object Styles */
 
@@ -130,7 +142,7 @@
 }
 
 .events, .collaborators {
-  margin-top: 100px;
+  margin-top: 25px;
 }
 
 core-icon-button {
