@@ -23,7 +23,7 @@ Polymer({
         this.setupCollaborativeString();
         this.setupCollaborativeList();
         this.setupCollaborativeMap();
-        this.setupCustomObject();
+        this.setupCustomObject(); 
         
         this.$.drawer.selected = 1;
         this.eventsList = [];
@@ -64,6 +64,7 @@ Polymer({
 
       onCollaboratorChange: function () {
         this.collaborators = this.doc.getCollaborators();
+        this.garbageCollectCursors();
       },
 
 
@@ -89,15 +90,37 @@ Polymer({
       // Collaborative List Methods
       setupCollaborativeList: function () {
         this.onListChange = this.onListChange.bind(this);
+        this.onReferenceShifted = this.onReferenceShifted.bind(this);
+        this.onCursorsChange = this.onCursorsChange.bind(this);
         this.listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, this.onListChange);
         this.listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, this.onListChange);
         this.listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_SET, this.onListChange);
+        this.cursorsDemo.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, this.onCursorsChange);
+        this.garbageCollectCursors();
         this.collaborativeList = this.listDemo.asArray();
       },
 
       onListChange: function (evt) {
         this.addEvent(evt);
         this.collaborativeList = this.listDemo.asArray();
+      },
+
+      onCursorsChange: function (evt) {
+        this.addEvent(evt);
+        this.garbageCollectCursors();
+      },
+
+      garbageCollectCursors: function () {
+        var keys = this.cursorsDemo.keys();
+        for(var i = 0; i < keys.length; i++){
+          if(!this.getCollaborator(keys[i])){
+            this.cursorsDemo.delete(keys[i]);
+          } else {
+            this.cursorsDemo.get(keys[i]).addEventListener(gapi.drive.realtime.EventType.REFERENCE_SHIFTED, this.onReferenceShifted);
+          }
+        }
+        this.references = this.parseMap(this.cursorsDemo);
+        this.updateCursorsUI();
       },
 
       onRemoveListItemClick: function () {
@@ -140,30 +163,79 @@ Polymer({
         }
       },
 
+      onRadioChange: function (evt) {
+        var index = this.getIndex(evt.target.attributes.name.value);
+        // Start a non undoable compound operation, we don't want to be able to undo a refrence creation
+        this.doc.getModel().beginCompoundOperation('', false);
+          if(!this.registeredReference) {
+            this.registeredReference = this.listDemo.registerReference(index, true);
+            this.registeredReference.addEventListener(gapi.drive.realtime.EventType.REFERENCE_SHIFTED, this.onReferenceShifted);
+            this.cursorsDemo.set(this.getMySessionId(), this.registeredReference);
+          }
+          this.registeredReference.index = index;
+        this.doc.getModel().endCompoundOperation();
+      },
+
+      onReferenceShifted: function (evt) {
+        this.addEvent(evt);
+        this.garbageCollectCursors();
+      },
+
+      updateCursorsUI: function () {
+        var elements = this.$.listDemoGroup.querySelectorAll('paper-radio-button');
+        for(var i = 0; i < elements.length; i++) {
+          elements[i].setAttribute('style', '');
+        }
+        for(var i = 0; i < this.references.length; i++){
+          var index = this.references[i].value.index;
+          var collaborator = this.getCollaborator(this.references[i].key);
+          var color = collaborator.isMe ? '' : collaborator.color;
+          elements[index].setAttribute('style', 'background-color:' + color);
+        }
+      },
+
+      getMySessionId: function () {
+        var collaborators = this.doc.getCollaborators();
+        for(var i = 0; i < collaborators.length; i++){
+          if(collaborators[i].isMe){
+            return collaborators[i].sessionId;
+          }
+        }
+      },
+
+      getCollaborator: function (sessionId) {
+        var collaborators = this.doc.getCollaborators();
+        for(var i = 0; i < collaborators.length; i++){
+          if(collaborators[i].sessionId == sessionId){
+            return collaborators[i];
+          }
+        }
+      },
+
 
 
       // Collaborative Map Methods
       setupCollaborativeMap: function () {
         this.onMapValueChanged = this.onMapValueChanged.bind(this);
         this.mapDemo.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, this.onMapValueChanged);
-        this.parseCollaborativeMap();
+        this.collaborativeMap = this.parseMap(this.mapDemo);
       },
 
       onMapValueChanged: function (evt) {
         this.addEvent(evt);
-        this.parseCollaborativeMap();
+        this.collaborativeMap = this.parseMap(this.mapDemo);
       },
 
-      parseCollaborativeMap: function () {
+      parseMap: function (map) {
         var mapArray = [];
-        var keys = this.mapDemo.keys();
+        var keys = map.keys();
         for(var i = 0; i < keys.length; i++){
           mapArray.push({
             key: keys[i],
-            value: this.mapDemo.get(keys[i])
+            value: map.get(keys[i])
           });
         }
-        this.collaborativeMap = mapArray;
+        return mapArray;
       },
 
       onMapItemClick: function (evt, no, el) {

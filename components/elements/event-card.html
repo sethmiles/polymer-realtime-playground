@@ -56,6 +56,9 @@
           case gapi.drive.realtime.EventType.UNDO_REDO_STATE_CHANGED:
             this.eventString = "The model's undo/redo state has changed -- canUndo: " + this.event.canUndo + ", canRedo: " + this.event.canRedo + ".";
             break;
+          case gapi.drive.realtime.EventType.REFERENCE_SHIFTED:
+            this.eventString = "SessionId " + this.event.sessionId + " has shifted cursor reference from " + this.event.oldIndex + " to " + this.event.newIndex + ".";
+            break;
         }
       }
     });

@@ -85,7 +85,7 @@
                     description="A collaborative list state is shared across sessions. Events are fired when items are added or removed to the list or when an existig item's value is set.">
                     <div class="left">
                       <div class="list-title">List Items</div>
-                      <paper-radio-group selected="{{ selectedItem }}" on-change="{{ onRadioGroupChange }}">
+                      <paper-radio-group id="listDemoGroup" selected="{{ selectedItem }}" on-change="{{ onRadioChange }}">
                         <template repeat="{{ listItem in collaborativeList }}">
                           <paper-radio-button name="{{ listItem }}" label="{{ listItem }}"></paper-radio-button>
                         </template>
