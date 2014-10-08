@@ -310,6 +310,8 @@ Polymer({
         this.fire('core-signal', { 
           name:'back'
         });
+        this.$.demoContainer.setAttribute('list-cascade', true);
+        this.$.demoContainer.removeAttribute('cross-fade');
         this.$.drawer.selected = 0;
         this.shadowRoot.querySelector('core-drawer-panel').closeDrawer();
       },
@@ -326,9 +328,9 @@ Polymer({
         this.doc.getModel().redo();
       },
 
-      viewCode: function (evt, data) {
+      seeCode: function (evt, x, el) {
         var page = 1;
-        switch(data.type){
+        switch(el.getAttribute('data-code')){
           case "string":
             page = 2;
             break;
@@ -342,11 +344,13 @@ Polymer({
             page = 5;
             break;
         }
+        this.$.demoContainer.removeAttribute('list-cascade');
+        this.$.demoContainer.setAttribute('cross-fade', true);
         this.$.drawer.selected = page;
         console.log('transitioning to code view');
       },
 
-      homeView: function () {
+      demosView: function () {
         this.$.drawer.selected = 1;
       }
 

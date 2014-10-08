@@ -3,62 +3,7 @@
 <polymer-element name="demo-card" attributes="id title color description codeView">
   <template>
   <style>
-    :host {
-      width: 80%;
-      margin-left: 10%;
-      margin-bottom: 25px;
-      background-color: #ffffff;
-      display: block;
-    }
-
-    .title {
-      font-size: 20px;
-      padding: 20px;
-    }
-
-    .blue {
-      color: white;
-      background-color: #5677fc;
-    }
-
-    .purple {
-      color: white;
-      background-color: #673ab7;
-    }
-
-    .green {
-      color: white;
-      background-color: #259b24;
-    }
-
-    .red {
-      color: white;
-      background-color: #9c27b0;
-    }
-
-    .yellow {
-      background-color: #ffeb3b;
-    }
-
-    .content {
-      padding: 20px;
-    }
-
-    .content p {
-      font-weight: 100;
-    }
-
-    .code-button {
-      position: absolute;
-      right: 20px;
-      top: 20px;
-    }
-
-    .code-button core-icon {
-      width: 30px;
-      height: 30px;
-      cursor: pointer;
-    }
+    
 
     core-animated-pages {
       /*width: 100%;
@@ -70,30 +15,9 @@
     <div class="outer">
       <core-animated-pages id="demoCard" selected="{{page}}" transitions="hero-transition" on-core-animated-pages-transition-end="{{complete}}">
         <section>
-          <div class="container">
-            <paper-shadow z="1"></paper-shadow>
-            <div class="title {{ color }}" hero>
-              {{ title }}
-              <template if="{{ codeView }}">
-                <div class="code-button" on-click="{{ seeCode }}">
-                  <core-tooltip className="custom-code" label="See Code">
-                    <core-icon icon="developer-mode-tv"></core-icon>
-                  </core-tooltip>
-                </div>
-              </template>
-            </div>
-            <div class="content">
-              <p>{{ description }}</p>
-              <content></content>
-            </div>
-          </div>
+          
         </section>
-        <section>
-          <div class="panel" hero>
-            <div on-click="{{ back }}">Back</div>
-            This is the code section
-          </div>
-        </section>
+        
       </core-animated-pages>
     </div>
   </template>
