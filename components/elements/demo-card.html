@@ -1,6 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 
-<polymer-element name="demo-card" attributes="title color description">
+<polymer-element name="demo-card" attributes="title color description codeView">
   <template>
   <style>
     :host {
@@ -31,6 +31,11 @@
       background-color: #259b24;
     }
 
+    .red {
+      color: white;
+      background-color: #9c27b0;
+    }
+
     .yellow {
       background-color: #ffeb3b;
     }
@@ -43,10 +48,31 @@
       font-weight: 100;
     }
 
+    .code-button {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+    }
+
+    .code-button core-icon {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+    }
+
   </style>
     <div class="container">
       <paper-shadow z="1"></paper-shadow>
-      <div class="title {{ color }}">{{ title }}</div>
+      <div class="title {{ color }}">
+        {{ title }}
+        <template if="{{ codeView }}">
+          <div class="code-button" on-click="seeCode">
+            <core-tooltip className="custom-code" label="See Code">
+              <core-icon icon="developer-mode-tv"></core-icon>
+            </core-tooltip>
+          </div>
+        </template>
+      </div>
       <div class="content">
         <p>{{ description }}</p>
         <content></content>
@@ -54,6 +80,11 @@
     </div>
   </template>
   <script>
-    Polymer({});
+    Polymer({
+      seeCode: function () {
+        console.log('lets see some code');
+      }
+
+    });
   </script>
 </polymer-element>

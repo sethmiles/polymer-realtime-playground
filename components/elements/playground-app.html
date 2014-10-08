@@ -26,26 +26,40 @@
       }
 
       .authView core-icon {
-        left: calc(50% - 175px);
-        top: calc(50% - 175px);
-      }
-
-      .authView core-icon:hover {
-        -webkit-transition: all .5s;
-        transition: all .5s;
-        color: #9fa8da;
+        
       }
 
       core-icon {
         cursor: pointer;
       }
 
-      .jumbo {
+      .jumbo-icon {
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        left: calc(50% - 175px);
+        top: calc(50% - 175px);
+      }
+
+      .jumbo-icon core-icon {
         transition: all .5s;
         -webkit-transition: all .5s;
         height: 250px;
         width: 250px;
         color: white;
+      }
+
+      .jumbo-icon core-icon:hover {
+        -webkit-transition: all .5s;
+        transition: all .5s;
+        color: #9fa8da;
+        cursor: pointer;
+      }
+
+      .jumbo-icon .subtitle {
+        color: white;
+        font-weight: 100;
+        text-align: center;
       }
     </style>
     <app-globals id="globals"></app-globals>
@@ -55,7 +69,9 @@
     </core-signals>
     <core-animated-pages id="app" transitions="slide-from-right" >
       <section class="authView">
-        <core-icon class="jumbo" icon="lock-open"></core-icon>
+        <div class="jumbo-icon">
+          <core-icon icon="lock-open"></core-icon>
+          <div class="subtitle">Authenticating...</div>
       </section>
       <section class="createView">
         <create-document></create-document>

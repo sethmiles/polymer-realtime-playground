@@ -12,6 +12,7 @@
 <link href="../core-animated-pages/transitions/list-cascade.html" rel="import">
 <link href="../core-animated-pages/transitions/cross-fade.html" rel="import">
 <link href="../core-animated-pages/transitions/slide-up.html" rel="import">
+<link href="../core-tooltip/core-tooltip.html" rel="import">
 
 <polymer-element name="realtime-demos" attributes="document documentTitle documentId">
   <template>
@@ -32,11 +33,21 @@
                     <div class="controls">
                       <div class="drawer-title">Controls</div>
                       <div class="controls-container">
-                        <core-icon-button icon="arrow-back" on-click="{{ back }}"></core-icon-button>
-                        <core-icon-button icon="open-in-new" on-click="{{ openInNewTab }}"></core-icon-button>
-                        <core-icon-button icon="account-child" on-click="{{ share }}"></core-icon-button>
-                        <core-icon-button icon="rotate-left" disabled?="{{ canUndo == false }}" on-click="{{ undo }}"></core-icon-button>
-                        <core-icon-button icon="rotate-right" disabled?="{{ canRedo == false }}" on-click="{{ redo }}"></core-icon-button>
+                        <core-tooltip label="Back">
+                          <core-icon-button icon="arrow-back" on-click="{{ back }}"></core-icon-button>
+                        </core-tooltip>
+                        <core-tooltip label="Open in new tab" className="no-left">
+                          <core-icon-button icon="open-in-new" on-click="{{ openInNewTab }}"></core-icon-button>
+                        </core-tooltip>
+                        <core-tooltip label="Share">
+                          <core-icon-button icon="account-child" on-click="{{ share }}"></core-icon-button>
+                        </core-tooltip>
+                        <core-tooltip label="Undo">
+                          <core-icon-button icon="rotate-left" disabled?="{{ canUndo == false }}" on-click="{{ undo }}"></core-icon-button>
+                        </core-tooltip>
+                        <core-tooltip label="Redo">
+                          <core-icon-button icon="rotate-right" disabled?="{{ canRedo == false }}" on-click="{{ redo }}"></core-icon-button>
+                        </core-tooltip>
                       </div>
                     </div>
                     <div class="collaborators">
@@ -69,11 +80,18 @@
               <section></section>
               <section>
                 <div class="container" list-cascade>
-                  
+
+                  <!-- Introduction -->
+                  <demo-card id="intro"
+                    title="Getting Started"
+                    color="blue"
+                    description="Google Drive collaborative documents are made of 4 types of collaborative elements: String, Lists, Maps and Custom objects. A Google Drive collaborative document can have as many of these collaborative elements as they need. As a demonstration, You will find below UI widgets representing collaborative elements of each type.">
+                  </demo-card>
                   <!-- Collaborative String Demo -->
                   <demo-card id="string"
                     title="Collaborative String"
-                    color="blue"
+                    color="red"
+                    codeView="true"
                     description="Collaborative strings are just like normal strings, except that all browser sessions will be notified and updated when the string changes. Events are fired when strings are inserted to the collaborative string or when part of the string is deleted.">
                       <paper-input id="stringInput" value="{{ collaborativeString }}" on-keyup="{{ onCollaborativeStringKeyup }}" label="type something..."></paper-input>
                   </demo-card>
@@ -82,6 +100,7 @@
                   <demo-card id="list"
                     title="Collaborative List"
                     color="purple"
+                    codeView="true"
                     description="A collaborative list state is shared across sessions. Events are fired when items are added or removed to the list or when an existig item's value is set.">
                     <div class="left">
                       <div class="list-title">List Items</div>
@@ -119,6 +138,7 @@
                   <demo-card id="map"
                     title="Collaborative Map"
                     color="green"
+                    codeView="true"
                     description="Collaborative maps share key/value state across sessions. They support standard map operations. Events are fired when key-value pairs are changed.">
                     <div class="left">
                       <table class="map-display">
@@ -162,6 +182,7 @@
                   <demo-card id="custom"
                     title="Custom Objects"
                     color="yellow"
+                    codeView="true"
                     description="Collaborative custom object have properties who's state is shared across sessions. Events are fired when property values are changed.">
                     <table>
                       <thead>

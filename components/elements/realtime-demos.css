@@ -15,14 +15,14 @@
 }
 
 .drawer {
-  background-color: #c5cae9;
+  background-color: #d0d9ff;
 }
 
 .main {
   background-color: #e8eaf6;
 }
 
-#string {
+#intro {
   margin-top: 200px;
 }
 
@@ -131,10 +131,10 @@
   font-size: 23px;
   font-weight: 100;
   color: white;
-  background-color: #1a237e;
-  height: 75px;
+  background-color: #5677fc;
+  height: 50px;
   width: 100%;
-  line-height:75px;
+  line-height:50px;
 }
 
 .collaborator-container {
@@ -149,10 +149,15 @@ core-icon-button {
   background-color: #fff;
   width: 75px;
   text-align: center;
-  margin: 18px;
+  margin: 5px;
 }
 
 core-animated-pages {
   width: 100%;
   height: 100%;
+}
+
+.controls-container {
+  margin-left: 45px;
+  margin-top: 10px;
 }
