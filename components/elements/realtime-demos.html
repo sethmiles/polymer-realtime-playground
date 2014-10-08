@@ -12,6 +12,7 @@
 <link href="../core-animated-pages/transitions/list-cascade.html" rel="import">
 <link href="../core-animated-pages/transitions/cross-fade.html" rel="import">
 <link href="../core-animated-pages/transitions/slide-up.html" rel="import">
+<link href="../core-animated-pages/transitions/hero-transition.html" rel="import">
 <link href="../core-tooltip/core-tooltip.html" rel="import">
 
 <polymer-element name="realtime-demos" attributes="document documentTitle documentId">
@@ -23,7 +24,11 @@
             url="https://www.googleapis.com/drive/v2/files/{{ documentId }}"
             params='{}'
             handleAs="json"
-            on-core-response="{{handleResponse}}"></core-ajax>
+            on-core-response="{{handleResponse}}">
+    </core-ajax>
+    <core-signals
+      on-core-signal-view-code="{{ viewCode }}">
+    </core-signals>
         <core-drawer-panel>
             <div drawer class="drawer">
               <core-animated-pages id="drawer" selected="{{ page }}" transitions="cross-fade list-cascade" on-core-animated-pages-transition-end="{{complete}}">
@@ -76,7 +81,7 @@
                 {{ documentTitle }}
               </div>
             </div>
-            <core-animated-pages id="main" selected="{{ page }}" transitions="cross-fade list-cascade" on-core-animated-pages-transition-end="{{complete}}">
+            <core-animated-pages id="main" selected="{{ page }}" transitions="hero-transition cross-fade list-cascade" on-core-animated-pages-transition-end="{{complete}}">
               <section></section>
               <section>
                 <div class="container" list-cascade>

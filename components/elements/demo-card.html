@@ -1,6 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 
-<polymer-element name="demo-card" attributes="title color description codeView">
+<polymer-element name="demo-card" attributes="id title color description codeView">
   <template>
   <style>
     :host {
@@ -60,31 +60,55 @@
       cursor: pointer;
     }
 
+    core-animated-pages {
+      /*width: 100%;
+      height: 100%;*/
+
+    }
+
   </style>
-    <div class="container">
-      <paper-shadow z="1"></paper-shadow>
-      <div class="title {{ color }}">
-        {{ title }}
-        <template if="{{ codeView }}">
-          <div class="code-button" on-click="seeCode">
-            <core-tooltip className="custom-code" label="See Code">
-              <core-icon icon="developer-mode-tv"></core-icon>
-            </core-tooltip>
+    <div class="outer">
+      <core-animated-pages id="demoCard" selected="{{page}}" transitions="hero-transition" on-core-animated-pages-transition-end="{{complete}}">
+        <section>
+          <div class="container">
+            <paper-shadow z="1"></paper-shadow>
+            <div class="title {{ color }}" hero>
+              {{ title }}
+              <template if="{{ codeView }}">
+                <div class="code-button" on-click="{{ seeCode }}">
+                  <core-tooltip className="custom-code" label="See Code">
+                    <core-icon icon="developer-mode-tv"></core-icon>
+                  </core-tooltip>
+                </div>
+              </template>
+            </div>
+            <div class="content">
+              <p>{{ description }}</p>
+              <content></content>
+            </div>
           </div>
-        </template>
-      </div>
-      <div class="content">
-        <p>{{ description }}</p>
-        <content></content>
-      </div>
+        </section>
+        <section>
+          <div class="panel" hero>
+            <div on-click="{{ back }}">Back</div>
+            This is the code section
+          </div>
+        </section>
+      </core-animated-pages>
     </div>
   </template>
   <script>
     Polymer({
+      ready: function () {
+        // this.$.demoCard.selected = 0;
+      },
       seeCode: function () {
-        console.log('lets see some code');
-      }
+        this.$.demoCard.selected = 1;
+      },
 
+      back: function () {
+        this.$.demoCard.selected = 0;
+      }
     });
   </script>
 </polymer-element>

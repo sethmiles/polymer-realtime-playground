@@ -294,10 +294,6 @@ Polymer({
         this.customDemo.rating = this.$.customRatingInput.inputValue;
       },
 
-
-
-
-
       addEvent: function (evt) {
         if(this.eventsList > 100){
           this.eventsList.pop();
@@ -328,6 +324,30 @@ Polymer({
 
       redo: function () {
         this.doc.getModel().redo();
+      },
+
+      viewCode: function (evt, data) {
+        var page = 1;
+        switch(data.type){
+          case "string":
+            page = 2;
+            break;
+          case "list":
+            page = 3;
+            break;
+          case "map":
+            page = 4;
+            break;
+          case "custom":
+            page = 5;
+            break;
+        }
+        this.$.drawer.selected = page;
+        console.log('transitioning to code view');
+      },
+
+      homeView: function () {
+        this.$.drawer.selected = 1;
       }
 
     });
