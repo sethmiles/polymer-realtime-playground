@@ -44,8 +44,8 @@ Utils.prototype = {
     this.createRealtimeFile = this.createRealtimeFile.bind(this);
   },
 
-  authorize: function (onAuthComplete) {
-    this.authorizer.start(onAuthComplete);
+  authorize: function (onAuthComplete, usePopup) {
+    this.authorizer.start(onAuthComplete, usePopup);
   },
 
   mergeOptions: function (options) {
@@ -105,10 +105,10 @@ Authorizer = function (util) {
 }
 
 Authorizer.prototype = {
-  start: function(onAuthComplete) {
+  start: function(onAuthComplete, usePopup) {
     var that = this;
     window.gapi.load('auth:client,drive-realtime,drive-share', function() {
-      that.authorize(false, onAuthComplete);
+      that.authorize(usePopup, onAuthComplete);
     });
   },
 
@@ -126,9 +126,7 @@ Authorizer.prototype = {
   handleAuthResult: function (authResult) {
     if (authResult && !authResult.error) {
       this.token = authResult.access_token;
-      this.onAuthComplete(authResult);
-    } else {
-      this.authorize(true);
     }
+    this.onAuthComplete(authResult);
   }
 }

@@ -70,8 +70,8 @@
     <core-animated-pages id="app" transitions="slide-from-right" >
       <section class="authView">
         <div class="jumbo-icon">
-          <core-icon icon="lock-open"></core-icon>
-          <div class="subtitle">Authenticating...</div>
+          <core-icon icon="lock-open" on-click="{{ authorize }}"></core-icon>
+          <div id="subtitle" class="subtitle">Authenticating...</div>
       </section>
       <section class="createView">
         <create-document></create-document>
@@ -88,17 +88,29 @@
         this.Movie = this.$.globals.Movie;
         this.onAuthComplete = this.onAuthComplete.bind(this);
         this.onFileLoaded = this.onFileLoaded.bind(this);
-        this.$.globals.util.authorize(this.onAuthComplete);
+        this.$.globals.util.authorize(this.onAuthComplete, false);
+        gapi.load('picker', {'callback': this.onPickerApiLoad});
       },
 
-      onAuthComplete: function () {
-        console.log('Authorized');
-        this.documentId = this.util.getDocumentIdFromUrl();
-        this.registerTypes();
-        if(this.documentId){
-          this.util.load(this.documentId, this.onFileLoaded, function() {});
+      onAuthComplete: function (authResult) {
+        if (!authResult || authResult.error) {
+          this.authorized = false;
+          this.$.subtitle.textContent = "Click to authenticate"
         } else {
-          this.$.app.selected = 1;  
+          this.authorized = true;
+          this.documentId = this.util.getDocumentIdFromUrl();
+          this.registerTypes();
+          if(this.documentId){
+            this.util.load(this.documentId, this.onFileLoaded, function() {});
+          } else {
+            this.$.app.selected = 1;  
+          }
+        }
+      },
+
+      authorize: function () {
+        if(this.authorized === false){
+          this.$.globals.util.authorize(this.onAuthComplete, true);  
         }
       },
 

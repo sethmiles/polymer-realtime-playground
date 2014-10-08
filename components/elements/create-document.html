@@ -13,7 +13,7 @@
   <template>
     <link rel="stylesheet" href="create-document.css">
     <app-globals id="globals"></app-globals>
-      <core-animated-pages id="createPage" selected="{{page}}" transitions="hero-transition slide-up slide-down cross-fade list-cascade" on-core-animated-pages-transition-end="{{complete}}">
+      <core-animated-pages id="createPage" selected="{{page}}" transitions="hero-transition slide-up slide-down cross-fade " on-core-animated-pages-transition-end="{{complete}}">
         <section layout vertical>
           <div class="icons">
             <div class="jumbo-icon" cross-fade>
@@ -45,32 +45,11 @@
           </div>
         </section>
         <section id="load" layout vertical>
-          <core-ajax
-            id="driveFilesRequest"
-            url="https://www.googleapis.com/drive/v2/files"
-            params='{"corpus":"DEFAULT", "maxResults":"100"}'
-            handleAs="json"
-            on-core-response="{{handleResponse}}">
-          </core-ajax>
-          <div id="panelBackground" hero-id="createDrive" slide-up>
-            <div id="panel">
-              <div flex class="panel">
-                <div class="top">
-                  <h1>Open Drive File</h1>
-                  <core-icon icon="drive" ></core-icon>
-                </div>
-                <div class="bottom">
-                  <div id="loader2"></div>
-                  <ul>
-                    <template repeat="{{file in files}}">
-                      <li document-id="{{ file.id }}" on-click="{{ onFileClick }}">{{ file.title }}</li>
-                    </template>
-                  </ul>
-                </div>
-                <core-icon id="back" icon="arrow-back" on-click="{{ back }}"></core-icon>
-              </div>
+          <div id="panelBackground" hero-id="createDrive" cross-fade></div>
+          <div class="jumbo-icon" cross-fade>
+              <core-icon id="createDrive" icon="cloud-circle"></core-icon>
+              <div class="subtitle">Loading document...</div>
             </div>
-          </div>
         </section>
       </core-animated-pages>
     </div>
@@ -82,11 +61,11 @@
         this.Movie = this.$.globals.Movie;
         this.onFileLoaded = this.onFileLoaded.bind(this);
         this.onInitialize = this.onInitialize.bind(this);
+        this.callback = this.callback.bind(this);
       },
 
       onCreateDriveDocumentClick: function () {
         this.$.createPage.selected = 1;
-        console.log('Creating drive document');
       },
 
       createDriveDocument: function () {
@@ -102,38 +81,39 @@
       },
 
       onOpenDriveDocumentClick: function () {
-        console.log('Opening Drive Files List');
-        this.$.driveFilesRequest.params = JSON.stringify({
-          corpus: 'DOMAIN',
-          maxResults: 100,
-          access_token: this.util.authorizer.token
-        });
-        this.files = [];
-        this.$.loader2.classList.remove('hidden');
-        this.$.driveFilesRequest.go();
+        // this.$.driveFilesRequest.params = JSON.stringify({
+        //   corpus: 'DOMAIN',
+        //   maxResults: 100,
+        //   access_token: this.util.authorizer.token
+        // });
+        // this.files = [];
+        // this.$.loader2.classList.remove('hidden');
+        // this.$.driveFilesRequest.go();
+        // this.$.createPage.selected = 2;
+
+        var token = gapi.auth.getToken().access_token;
+        var view = new google.picker.View(google.picker.ViewId.DOCS);
+        view.setMimeTypes("application/vnd.google-apps.drive-sdk." + this.util.options.appId);
+        var picker = new google.picker.PickerBuilder()
+            .enableFeature(google.picker.Feature.NAV_HIDDEN)
+            .setAppId(this.util.options.appId)
+            .setOAuthToken(token)
+            .addView(view)
+            .addView(new google.picker.DocsUploadView())
+            .setCallback(this.callback)
+            .build();
+        picker.setVisible(true);
         this.$.createPage.selected = 2;
       },
 
-      back: function () {
-        this.$.createPage.selected = 0;
-      },
-
-      handleResponse: function (resp) {
-        console.log('logging response!', resp);
-        this.files = [];
-        var items = resp.detail.response.items;
-        for(var i = 0; i < items.length; i++){
-          if(items[i].mimeType.indexOf(this.util.options.mimeType) == 0 && !items[i].labels.trashed && !items[i].labels.hidden){
-            this.files.push(items[i]);
-          }
+      callback: function (resp) {
+        if(resp.action == 'picked'){
+          this.documentId = resp.docs[0].id;
+          this.util.load(this.documentId, this.onFileLoaded, this.onInitialize);
         }
-        this.$.loader2.classList.add('hidden');
       },
 
-      onFileClick: function (evt) {
-        this.documentId = evt.target.attributes.getNamedItem('document-id').value;
-        this.documentTitle = evt.target.textContent;
-        this.util.load(this.documentId, this.onFileLoaded, this.onInitialize);
+      back: function () {
         this.$.createPage.selected = 0;
       },
 
@@ -150,7 +130,7 @@
             documentId: this.documentId
           }
         });
-
+        this.back();
       },
 
       onInitialize: function (model) {
