@@ -332,15 +332,19 @@ Polymer({
         var page = 1;
         switch(el.getAttribute('data-code')){
           case "string":
+            hljs.highlightBlock(this.$.stringSampleCodeBlock);
             page = 2;
             break;
           case "list":
+            hljs.highlightBlock(this.$.listSampleCodeBlock);
             page = 3;
             break;
           case "map":
+            hljs.highlightBlock(this.$.mapSampleCodeBlock);
             page = 4;
             break;
           case "custom":
+            hljs.highlightBlock(this.$.customSampleCodeBlock);
             page = 5;
             break;
         }

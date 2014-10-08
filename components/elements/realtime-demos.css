@@ -191,9 +191,19 @@ core-animated-pages {
   background-color: #673ab7;
 }
 
+.purple .demos-view-icon {
+  background-color: white;
+  color: #673ab7;
+}
+
 .green {
   color: white;
   background-color: #259b24;
+}
+
+.green .demos-view-icon {
+  color: #259b24;
+  background-color: white;
 }
 
 .red {
@@ -201,8 +211,18 @@ core-animated-pages {
   background-color: #9c27b0;
 }
 
+.red .demos-view-icon {
+  background-color: white;
+  color: #9c27b0;
+}
+
 .yellow {
   background-color: #ffeb3b;
+}
+
+.yellow .demos-view-icon {
+  color: #ffeb3b;
+  background-color: #000;
 }
 
 .content {
@@ -237,9 +257,42 @@ core-animated-pages {
 #codePanel {
   width: 100%;
   height: 100%;
+  padding: 30px 0px;
 }
 
 .code-footer {
   width: 100%;
   height: 0%;
 }
+
+.code-container {
+  width: 80%;
+  margin-left: 10%;
+  position: relative;
+}
+
+.code-container pre {
+  position: relative;
+}
+
+.code-container code {
+  overflow: auto;
+}
+
+#codePanel h1 {
+  font-size: 40px;
+  font-weight: 100;
+}
+
+.demos-view-icon {
+  position: absolute;
+  top: 0;
+  left: -25px;
+  height: 50px;
+  width: 50px;
+  border-radius: 25px;
+}
+
+.demos-view-icon:hover {
+  cursor: pointer;
+};
