@@ -1,19 +1,13 @@
 <link rel="import" href="../polymer/polymer.html">
-<link href="../core-animated-pages/core-animated-pages.html" rel="import">
-<link href="../core-animated-pages/transitions/slide-up.html" rel="import">
-<link href="../core-animated-pages/transitions/slide-down.html" rel="import">
-<link href="../core-animated-pages/transitions/list-cascade.html" rel="import">
-<link href="../paper-input/paper-input.html" rel="import">
-<link href="../paper-button/paper-button.html" rel="import">
-<link href="../elements/app-globals.html" rel="import">
-<link href="../core-ajax/core-ajax.html" rel="import">
-<link href="../paper-progress/paper-progress.html" rel="import">
+<link rel="import" href="../core-animated-pages/transitions/slide-up.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-button/paper-button.html">
 
 <polymer-element name="create-document">
   <template>
     <link rel="stylesheet" href="create-document.css">
     <app-globals id="globals"></app-globals>
-      <core-animated-pages id="createPage" selected="{{page}}" transitions="hero-transition slide-up slide-down cross-fade " on-core-animated-pages-transition-end="{{complete}}">
+      <core-animated-pages id="createPage" selected="{{page}}" transitions="slide-up" on-core-animated-pages-transition-end="{{complete}}">
         <section layout vertical>
           <div class="icons">
             <div class="jumbo-icon" cross-fade>
@@ -27,7 +21,7 @@
           </div>
         </section>
         <section id="create" layout vertical>
-          <div id="panelBackground" hero-id="createDrive" slide-up>
+          <div id="panelBackground" slide-up>
             <div id="panel">
               <div flex class="panel">
                 <div class="top">
@@ -45,7 +39,7 @@
           </div>
         </section>
         <section id="load" layout vertical>
-          <div id="panelBackground" hero-id="createDrive" cross-fade></div>
+          <div id="panelBackground" cross-fade></div>
           <div class="jumbo-icon" cross-fade>
               <core-icon id="createDrive" icon="cloud-circle"></core-icon>
               <div class="subtitle">Loading document...</div>
@@ -54,111 +48,5 @@
       </core-animated-pages>
     </div>
   </template>
-  <script>
-    Polymer({
-      ready: function () {
-        this.util = this.$.globals.util;
-        this.Movie = this.$.globals.Movie;
-        this.onFileLoaded = this.onFileLoaded.bind(this);
-        this.onInitialize = this.onInitialize.bind(this);
-        this.callback = this.callback.bind(this);
-      },
-
-      onCreateDriveDocumentClick: function () {
-        this.$.createPage.selected = 1;
-      },
-
-      createDriveDocument: function () {
-        var that = this;
-        this.$.create.disabled = true;
-        this.documentTitle = this.$.name.value;
-        this.$.loader1.classList.remove('hidden');
-        this.util.createRealtimeFile(this.documentTitle, function (resp) {
-          that.documentId = resp.result.id;
-          that.util.load(that.documentId, that.onFileLoaded, that.onInitialize);
-        });
-        
-      },
-
-      onOpenDriveDocumentClick: function () {
-        // this.$.driveFilesRequest.params = JSON.stringify({
-        //   corpus: 'DOMAIN',
-        //   maxResults: 100,
-        //   access_token: this.util.authorizer.token
-        // });
-        // this.files = [];
-        // this.$.loader2.classList.remove('hidden');
-        // this.$.driveFilesRequest.go();
-        // this.$.createPage.selected = 2;
-
-        var token = gapi.auth.getToken().access_token;
-        var view = new google.picker.View(google.picker.ViewId.DOCS);
-        view.setMimeTypes("application/vnd.google-apps.drive-sdk." + this.util.options.appId);
-        var picker = new google.picker.PickerBuilder()
-            .enableFeature(google.picker.Feature.NAV_HIDDEN)
-            .setAppId(this.util.options.appId)
-            .setOAuthToken(token)
-            .addView(view)
-            .addView(new google.picker.DocsUploadView())
-            .setCallback(this.callback)
-            .build();
-        picker.setVisible(true);
-        this.$.createPage.selected = 2;
-      },
-
-      callback: function (resp) {
-        if(resp.action == 'picked'){
-          this.documentId = resp.docs[0].id;
-          this.util.load(this.documentId, this.onFileLoaded, this.onInitialize);
-        }
-      },
-
-      back: function () {
-        this.$.createPage.selected = 0;
-      },
-
-      onFileLoaded: function (doc) {
-        this.$.createPage.selected = 0;
-        this.$.loader1.classList.add('hidden');
-        this.$.name.value = '';
-        this.$.create.disabled = false;
-        this.fire('core-signal', { 
-          name:'file-loaded', 
-          data: { 
-            doc: doc,
-            documentTitle: this.documentTitle,
-            documentId: this.documentId
-          }
-        });
-        this.back();
-      },
-
-      onInitialize: function (model) {
-        
-        // String Initializer
-        var collaborativeString = model.createString('Edit Me!');
-        model.getRoot().set('demo_string', collaborativeString);
-
-        // List Initializer
-        var collaborativeList = model.createList();
-        collaborativeList.pushAll(['Cat', 'Dog', 'Sheep', 'Chicken']);
-        model.getRoot().set('demo_list', collaborativeList);
-
-        var cursorsMap = model.createMap();
-        model.getRoot().set('demo_cursors', cursorsMap);
-
-        // Map Initializer
-        var collaborativeMap = model.createMap({
-          key1: "value 1",
-          key2: "value 2",
-          key3: "value 3"
-        });
-        model.getRoot().set('demo_map', collaborativeMap);
-
-        var customObject = model.create(this.Movie, 'Minority Report', 'Steven Spielberg');
-        model.getRoot().set('demo_custom', customObject);
-
-      }
-    });
-  </script>
+  <script src="create-document.js"></script>
 </polymer-element>

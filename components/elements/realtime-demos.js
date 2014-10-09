@@ -26,11 +26,10 @@ Polymer({
     
     this.$.drawer.selected = 1;
     this.eventsList = [];
-
-
   },
 
   documentIdChanged: function (evt, id) {
+    this.documentTitle = "loading . . ."
     this.$.driveFileMetadataRequest.params = JSON.stringify({
       access_token: this.util.authorizer.token
     });
@@ -351,7 +350,6 @@ Polymer({
         break;
     }
     this.$.demoContainer.removeAttribute('list-cascade');
-    this.$.demoContainer.setAttribute('cross-fade', true);
     this.$.drawer.selected = page;
   },
 

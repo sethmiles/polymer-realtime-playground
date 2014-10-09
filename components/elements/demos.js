@@ -107,13 +107,6 @@ function getValues () {
 
 
 
-
-
-
-
-
-
-
 // Custom Object
 var app = {};
 

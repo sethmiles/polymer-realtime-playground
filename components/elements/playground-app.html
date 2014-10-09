@@ -1,67 +1,15 @@
 <link rel="import" href="../polymer/polymer.html">
-<link href="../core-animation/core-animation.html" rel="import">
-<link href="../core-animated-pages/core-animated-pages.html" rel="import">
-<link href="../core-animated-pages/transitions/slide-from-right.html" rel="import">
-<link href="../core-icons/core-icons.html" rel="import">
-<link rel="import" href="create-document.html">
-<link rel="import" href="app-globals.html">
+<link rel="import" href="../core-animated-pages/core-animated-pages.html">
+<link rel="import" href="../core-animated-pages/transitions/slide-from-right.html">
+<link rel="import" href="../core-icons/core-icons.html">
 <link rel="import" href="../core-signals/core-signals.html">
+<link rel="import" href="app-globals.html">
+<link rel="import" href="create-document.html">
 <link rel="import" href="realtime-demos.html">
 
 <polymer-element name="playground-app">
   <template>
-    <style>
-      core-animated-pages {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        overflow: hidden;
-      }
-
-      section {
-        height: 100%;
-        width: 100%;
-      }
-
-      .authView core-icon {
-        
-      }
-
-      core-icon {
-        cursor: pointer;
-      }
-
-      .jumbo-icon {
-        position: absolute;
-        width: 250px;
-        height: 250px;
-        left: calc(50% - 175px);
-        top: calc(50% - 175px);
-      }
-
-      .jumbo-icon core-icon {
-        transition: all .5s;
-        -webkit-transition: all .5s;
-        height: 250px;
-        width: 250px;
-        color: white;
-      }
-
-      .jumbo-icon core-icon:hover {
-        -webkit-transition: all .5s;
-        transition: all .5s;
-        color: #9fa8da;
-        cursor: pointer;
-      }
-
-      .jumbo-icon .subtitle {
-        color: white;
-        font-weight: 100;
-        text-align: center;
-      }
-    </style>
+    <link rel="stylesheet" href="playground-app.css">
     <app-globals id="globals"></app-globals>
     <core-signals
       on-core-signal-file-loaded="{{ onDocumentLoaded }}"
@@ -77,82 +25,9 @@
         <create-document></create-document>
       </section>
       <section>
-        <realtime-demos document="{{ document }}"></realtime-demos>
+        <realtime-demos></realtime-demos>
       </section>
     </core-animated-pages>
   </template>
-  <script>
-    Polymer({
-      ready: function () {
-        this.util = this.$.globals.util;
-        this.Movie = this.$.globals.Movie;
-        this.onAuthComplete = this.onAuthComplete.bind(this);
-        this.onFileLoaded = this.onFileLoaded.bind(this);
-        this.$.globals.util.authorize(this.onAuthComplete, false);
-        gapi.load('picker', {'callback': this.onPickerApiLoad});
-      },
-
-      onAuthComplete: function (authResult) {
-        if (!authResult || authResult.error) {
-          this.authorized = false;
-          this.$.subtitle.textContent = "Click to authenticate"
-        } else {
-          this.authorized = true;
-          this.documentId = this.util.getDocumentIdFromUrl();
-          this.registerTypes();
-          if(this.documentId){
-            this.util.load(this.documentId, this.onFileLoaded, function() {});
-          } else {
-            this.$.app.selected = 1;  
-          }
-        }
-      },
-
-      authorize: function () {
-        if(this.authorized === false){
-          this.$.globals.util.authorize(this.onAuthComplete, true);  
-        }
-      },
-
-      onFileLoaded: function (doc) {
-        this.onDocumentLoaded(null, {
-          doc: doc,
-          documentTitle: 'noTitle...',
-          documentId: this.documentId
-        });
-      },
-
-      onDocumentLoaded: function (evt, data) {
-        this.shadowRoot.querySelector('realtime-demos').document = data.doc;
-        this.shadowRoot.querySelector('realtime-demos').documentTitle = data.documentTitle;
-        this.shadowRoot.querySelector('realtime-demos').documentId = data.documentId;
-        this.$.app.selected = 2;
-      },
-
-      back: function () {
-        this.$.app.selected = 1;
-      },
-
-      registerTypes: function () {
-        if(this.typesRegistered){
-          return;
-        }
-        this.typesRegistered = true;
-
-        // Register type of custom object
-        try {
-          var custom = gapi.drive.realtime.custom;
-          custom.registerType(this.Movie, 'DemoMovie');
-          this.Movie.prototype.name = custom.collaborativeField('name');
-          this.Movie.prototype.director = custom.collaborativeField('director');
-          this.Movie.prototype.notes = custom.collaborativeField('notes');
-          this.Movie.prototype.rating = custom.collaborativeField('rating');
-          custom.setInitializer(this.Movie, this.Movie.prototype.initialize);
-        } catch (e) {
-          return;
-        }
-      }
-
-    });
-  </script>
+  <script src="playground-app.js"></script>
 </playground-app>
