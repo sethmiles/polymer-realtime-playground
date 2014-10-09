@@ -65,7 +65,12 @@ onFileLoaded: function (doc) {
       documentId: this.documentId
     }
   });
-  this.back();
+
+  var that = this;
+  setTimeout(function(){
+    that.back();  
+  }, 1000);
+  
 },
 
 onInitialize: function (model) {

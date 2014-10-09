@@ -307,10 +307,15 @@ Polymer({
     this.fire('core-signal', { 
       name:'back'
     });
-    this.$.demoContainer.setAttribute('list-cascade', true);
-    this.$.demoContainer.removeAttribute('cross-fade');
-    this.$.drawer.selected = 0;
-    this.shadowRoot.querySelector('core-drawer-panel').closeDrawer();
+    
+    var that = this;
+
+    setTimeout(function(){
+      that.$.drawer.selected = 0;
+      that.$.demoContainer.setAttribute('tile-cascade');
+      that.shadowRoot.querySelector('core-drawer-panel').closeDrawer();
+    }, 1000);
+    
   },
 
   share: function () {
@@ -349,7 +354,7 @@ Polymer({
         page = 5;
         break;
     }
-    this.$.demoContainer.removeAttribute('list-cascade');
+    this.$.demoContainer.removeAttribute('tile-cascade');
     this.$.drawer.selected = page;
   },
 

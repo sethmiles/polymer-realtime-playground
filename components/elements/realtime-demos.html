@@ -1,5 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../core-animated-pages/transitions/list-cascade.html">
+<link rel="import" href="../core-animated-pages/transitions/tile-cascade.html">
 <link rel="import" href="../core-animated-pages/transitions/hero-transition.html">
 <link rel="import" href="../core-ajax/core-ajax.html">
 <link rel="import" href="../core-drawer-panel/core-drawer-panel.html">
@@ -28,10 +28,10 @@
     </core-signals>
     <core-drawer-panel>
       <div drawer class="drawer">
-        <core-animated-pages id="drawer" selected="{{ page }}" transitions="list-cascade" on-core-animated-pages-transition-end="{{complete}}">
+        <core-animated-pages id="drawer" selected="{{ page }}" transitions="tile-cascade list-cascade" on-core-animated-pages-transition-end="{{complete}}">
           <section></section>
           <section>
-            <div list-cascade>
+            <div tile-cascade>
               <div class="controls">
                 <div class="drawer-title">Controls</div>
                 <div class="controls-container">
@@ -63,9 +63,9 @@
               <div class="events">
                 <div class="drawer-title">Events</div>
                 <div class="events-container">
-                  <!-- <template repeat="{{event in eventsList}}">
+                  <template repeat="{{event in eventsList}}">
                     <event-card event="{{event}}"></event-card>
-                  </template> -->
+                  </template>
                 </div>
               </div>
             </div>
@@ -78,10 +78,10 @@
             {{ documentTitle }}
           </div>
         </div>
-        <core-animated-pages id="main" selected="{{ page }}" transitions="hero-transition list-cascade cross-fade" on-core-animated-pages-transition-end="{{complete}}">
+        <core-animated-pages id="main" selected="{{ page }}" transitions="hero-transition tile-cascade" on-core-animated-pages-transition-end="{{complete}}">
           <section></section>
           <section>
-            <div id="demoContainer" class="container" list-cascade>
+            <div id="demoContainer" class="container" tile-cascade>
 
 
               <div id="intro" class="demo-card">
