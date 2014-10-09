@@ -18,13 +18,14 @@ section {
   top:calc(50% - 175px);
 }
 
-.jumbo-icon {
+.create-document-jumbo-icon {
   width: 250px;
   height: 250px;
   display: inline-block;
+  position: relative;
 }
 
-.jumbo-icon core-icon {
+.create-document-jumbo-icon core-icon {
   transition: all .5s;
   -webkit-transition: all .5s;
   height: 250px;
@@ -32,20 +33,20 @@ section {
   color: white;
 }
 
-.jumbo-icon core-icon:hover {
+.create-document-jumbo-icon core-icon:hover {
   -webkit-transition: all .5s;
   transition: all .5s;
   color: #9fa8da;
   cursor: pointer;
 }
 
-.jumbo-icon .subtitle {
+.create-document-jumbo-icon .subtitle {
   color: white;
   font-weight: 100;
   text-align: center;
 }
 
-#load .jumbo-icon {
+#load .create-document-jumbo-icon {
   position: absolute;
   left:calc(50% - 175px);
   top:calc(50% - 175px);

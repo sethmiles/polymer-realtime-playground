@@ -10,11 +10,11 @@
       <core-animated-pages id="createPage" selected="{{page}}" transitions="slide-up" on-core-animated-pages-transition-end="{{complete}}">
         <section layout vertical>
           <div class="icons">
-            <div class="jumbo-icon" cross-fade>
+            <div class="create-document-jumbo-icon" cross-fade>
               <core-icon id="createDrive" icon="note-add" on-click="{{ onCreateDriveDocumentClick }}"></core-icon>
               <div class="subtitle">Create Realtime Document</div>
             </div>
-            <div class="jumbo-icon" cross-fade>
+            <div class="create-document-jumbo-icon" cross-fade>
               <core-icon id="openDrive" icon="drive" on-click="{{ onOpenDriveDocumentClick }}"></core-icon>
               <div class="subtitle">Open Drive Document</div>
             </div>
@@ -40,7 +40,7 @@
         </section>
         <section id="load" layout vertical>
           <div id="panelBackground" cross-fade></div>
-          <div class="jumbo-icon" cross-fade>
+          <div class="create-document-jumbo-icon" cross-fade>
               <core-icon id="createDrive" icon="cloud-circle"></core-icon>
               <div class="subtitle">Loading document...</div>
             </div>
