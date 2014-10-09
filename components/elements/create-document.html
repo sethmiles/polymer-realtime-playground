@@ -2,6 +2,7 @@
 <link rel="import" href="../core-animated-pages/transitions/slide-up.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-spinner/paper-spinner.html">
 
 <polymer-element name="create-document">
   <template>
@@ -29,9 +30,9 @@
                   <core-icon icon="drive-file" ></core-icon>
                 </div>
                 <div class="bottom">
-                  <div id="loader1" class="hidden"></div>
-                  <paper-input id="name" label="Document Name"></paper-input>
-                  <paper-button id="create" label="Create" on-click="{{ createDriveDocument }}" raisedButton></paper-button>
+                  <paper-spinner id="loader1" active class="hidden"></paper-spinner>
+                  <paper-input id="name" label="Document Name" inputValue="{{ documentName }}"></paper-input>
+                  <paper-button id="create" label="Create" on-click="{{ createDriveDocument }}" disabled?="{{ documentName.length == 0 }}"></paper-button>
                 </div>
               </div>
               <core-icon id="back" icon="arrow-back" on-click="{{ back }}"></core-icon>

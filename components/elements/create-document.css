@@ -150,7 +150,6 @@ paper-button {
 }
 
 #loader1, #loader2 {
-  background-image: url('../../img/ajax-loader.gif');
   position: absolute;
   width: 30px;
   height: 30px;
@@ -162,11 +161,7 @@ paper-button {
   bottom: 50px;
 }
 
-#loader2 {
-  top:calc(50% - 25px);
-}
-
-#loader1.hidden, #loader2.hidden {
+#loader1.hidden {
   opacity: 0;
   z-index: -1;
   transition: all 1s;

@@ -25,7 +25,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 }
 
 .core-tooltip {
-  left: 22px !important; /*Custom*/
+  left: 15px !important; /*Custom*/
   top: 40px !important; /*Custom*/
   position: absolute;
   font-size: 10px;
@@ -62,7 +62,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 }
 
 .core-tooltip.no-left{
-  left: 0 !important;
+  left: -9px !important;
 }
 
 .core-tooltip.custom-code {

@@ -15,8 +15,12 @@ function onFileLoaded (doc) {
 }
 
 function setup () {
-  app.stringDemo.addEventListener(gapi.drive.realtime.EventType.TEXT_INSERTED, onStringChange);
-  app.stringDemo.addEventListener(gapi.drive.realtime.EventType.TEXT_DELETED, onStringChange);
+  app.stringDemo.addEventListener(
+    gapi.drive.realtime.EventType.TEXT_INSERTED,
+    onStringChange);
+  app.stringDemo.addEventListener(
+    gapi.drive.realtime.EventType.TEXT_DELETED,
+    onStringChange);
 }
 
 function onStringChange (evt) {
@@ -50,9 +54,15 @@ function onFileLoaded (doc) {
 }
 
 function setup () {
-  app.listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, onListChange);
-  app.listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, onListChange);
-  app.listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_SET, onListChange);
+  app.listDemo.addEventListener(
+    gapi.drive.realtime.EventType.VALUES_ADDED,
+    onListChange);
+  app.listDemo.addEventListener(
+    gapi.drive.realtime.EventType.VALUES_REMOVED,
+    onListChange);
+  app.listDemo.addEventListener(
+    gapi.drive.realtime.EventType.VALUES_SET,
+    onListChange);
 }
 
 function onListChange (evt) {
@@ -85,7 +95,9 @@ function onFileLoaded (doc) {
 }
 
 function setup () {
-  this.mapDemo.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, this.onMapValueChanged);
+  this.mapDemo.addEventListener(
+    gapi.drive.realtime.EventType.VALUE_CHANGED,
+    this.onMapValueChanged);
 }
 
 function onMapValueChanged (evt) {
@@ -145,7 +157,9 @@ function onFileLoaded (doc) {
 }
 
 function setup () {
-  app.customDemo.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, onCustomDemoChange);
+  app.customDemo.addEventListener(
+    gapi.drive.realtime.EventType.VALUE_CHANGED,
+    onCustomDemoChange);
 }
 
 // Below we look at just the director field, but you would need to update the UI for all fields
