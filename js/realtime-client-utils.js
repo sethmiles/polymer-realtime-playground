@@ -32,8 +32,7 @@ Utils.prototype = {
     afterAuth: null // No action.
   },
 
-  scopes: ['https://www.googleapis.com/auth/drive.metadata.readonly',
-          'https://www.googleapis.com/auth/drive.install',
+  scopes: ['https://www.googleapis.com/auth/drive.install',
           'https://www.googleapis.com/auth/drive.file'],
 
   openId: 'openid',

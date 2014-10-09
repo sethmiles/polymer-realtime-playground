@@ -70,17 +70,13 @@
         </core-animated-pages>
       </div>
       <div main class="main">
-        <div class="blue-bg">
-          <div class="doc-title">
-            {{ documentTitle }}
-          </div>
-        </div>
+        <div class="blue-bg"></div>
         <core-animated-pages id="main" selected="{{ page }}" transitions="hero-transition tile-cascade" on-core-animated-pages-transition-end="{{complete}}">
           <section></section>
           <section>
             <div id="demoContainer" class="container" tile-cascade>
               <core-icon id="back-icon" icon="arrow-back" on-click="{{ back }}"></core-icon>
-
+              <div class="doc-title">{{ documentTitle }}</div>
               <div id="intro" class="demo-card">
                 <div class="container">
                   <paper-shadow z="1"></paper-shadow>
