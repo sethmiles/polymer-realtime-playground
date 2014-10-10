@@ -299,8 +299,9 @@ Polymer({
   },
 
   openInNewTab: function () {
-    var url = window.location.origin + '/#' + this.documentId;
-    window.open(url, '_blank');
+    var serverUrl = this.util.getParam('serverUrl');
+    var documentId = this.util.getParam('id');
+    window.open(window.location.origin + '?id=' + documentId + (serverUrl ? '&serverUrl=' + serverUrl : ''), '_blank');
   },
 
   back: function () {

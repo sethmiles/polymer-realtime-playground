@@ -67,7 +67,8 @@
 
 .right table td {
   padding: 0px;
-  height: 40px;
+  height: 54px;
+  vertical-align: bottom;
 }
 
 .left {
@@ -252,6 +253,12 @@ core-animated-pages {
   font-weight: 100;
 }
 
+.content p a {
+  text-decoration: underline;
+  color: blue;
+  cursor: pointer;
+}
+
 .code-button {
   position: absolute;
   right: 20px;
@@ -263,9 +270,6 @@ core-animated-pages {
   height: 30px;
   cursor: pointer;
 }
-
-
-
 
 .panel {
   width: 100%;
@@ -314,4 +318,4 @@ core-animated-pages {
 
 .demos-view-icon:hover {
   cursor: pointer;
-};
+}

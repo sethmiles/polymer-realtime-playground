@@ -12,10 +12,6 @@ section {
   width: 100%;
 }
 
-.authView core-icon {
-  
-}
-
 core-icon {
   cursor: pointer;
 }

@@ -82,12 +82,15 @@
                   <paper-shadow z="1"></paper-shadow>
                   <div class="title blue" hero>Getting Started</div>
                   <div class="content">
-                    <p>Google Drive collaborative documents are made of 4 types of collaborative elements: String, Lists, Maps and Custom objects. A Google Drive collaborative document can have as many of these collaborative elements as they need. As a demonstration, You will find below UI widgets representing collaborative elements of each type.</p>
+                    <p>Google Drive collaborative documents are made of 4 types of collaborative elements: String, Lists, Maps and Custom objects. A Google Drive collaborative document can have as many of these collaborative elements as they need. As a demonstration, you will find below UI widgets representing collaborative elements of each type.
+                    <br /><br />
+                    Open <a on-click="{{ openInNewTab }}">this document</a> in a new tab and watch your changes instantly appear across browser windows.
+                    </p>
                   </div>
                 </div>
               </div>
 
-
+              <!-- String Demo -->
               <div id="string" class="demo-card" hero hero-id="string-code">
                 <div class="container">
                   <paper-shadow z="1"></paper-shadow>
@@ -100,13 +103,13 @@
                     </div>
                   </div>
                   <div class="content" hero-id="string-code-body">
-                    <p>Collaborative strings are just like normal strings, except that all browser sessions will be notified and updated when the string changes. Events are fired when strings are inserted to the collaborative string or when part of the string is deleted.</p>
-                    <paper-input id="stringInput" value="{{ collaborativeString }}" on-keyup="{{ onCollaborativeStringKeyup }}" label="type something..."></paper-input>
+                    <p>Collaborative strings are just like normal strings, except that all browser sessions will be notified and updated when the string changes. Events are fired when a collaborative string is modified.</p>
+                    <paper-input floatingLabel multiline id="stringInput" value="{{ collaborativeString }}" on-keyup="{{ onCollaborativeStringKeyup }}" label="type something..."></paper-input>
                   </div>
                 </div>
               </div>
 
-
+              <!-- List Demo -->
               <div id="list" class="demo-card" hero hero-id="list-code">
                 <div class="container">
                   <paper-shadow z="1"></paper-shadow>
@@ -135,18 +138,18 @@
                         </tr>
                         <tr>
                           <td><paper-button raised on-click="{{ onAddListItemClick }}" disabled?="{{ addItemValue.length == 0 }}">Add Item</paper-button></td>
-                          <td><paper-input id="addListItemInput" label="item name..." inputValue="{{ addItemValue }}"></paper-input></td>
+                          <td><paper-input floatingLabel id="addListItemInput" label="item name..." inputValue="{{ addItemValue }}"></paper-input></td>
                         </tr>
                         <tr>
                           <td><paper-button raised on-click="{{ onClearListClick }}" disabled?="{{ collaborativeList.length == 0 }}">Clear List</paper-button></td>
                         </tr>
                         <tr>
                           <td><paper-button raised on-click="{{ onSetListItemClick }}" disabled?="{{ setItemValue.length == 0 }}">Set Selected Item</paper-button></td>
-                          <td><paper-input id="setListItemInput" label="item name..." inputValue="{{ setItemValue }}"></paper-input></td>
+                          <td><paper-input floatingLabel id="setListItemInput" label="item name..." inputValue="{{ setItemValue }}"></paper-input></td>
                         </tr>
                         <tr>
                           <td><paper-button raised on-click="{{ onMoveListItemClick }}" disabled?="{{ moveItemValue.length == 0 }}">Move Item To Index</paper-button></td>
-                          <td><paper-input id="moveListItemInput" label="new index..." inputValue="{{ moveItemValue }}"></paper-input></td>
+                          <td><paper-input floatingLabel id="moveListItemInput" label="new index..." inputValue="{{ moveItemValue }}"></paper-input></td>
                         </tr>
                       </table>
                     </div>
@@ -154,7 +157,7 @@
                 </div>
               </div>
 
-
+              <!-- Map Demo -->
               <div id="map" class="demo-card" hero hero-id="map-code">
                 <div class="container">
                   <paper-shadow z="1"></paper-shadow>
@@ -196,11 +199,11 @@
                         </tr>
                         <tr>
                           <td><paper-button raised on-click="{{ onAddMapItemClick }}" disabled?="{{ !addMapKeyValue.length && !addMapValue.length }}">Add Pair</paper-button></td>
-                          <td><paper-input id="addMapKeyInput" inputValue="{{ addMapKeyValue }}" label="key..."></paper-input></td>
+                          <td><paper-input floatingLabel id="addMapKeyInput" inputValue="{{ addMapKeyValue }}" label="key..."></paper-input></td>
                         </tr>
                         <tr>
                           <td></td>
-                          <td><paper-input id="addMapValueInput" inputValue="{{ addMapValue }}" label="value..."></paper-input></td>
+                          <td><paper-input floatingLabel id="addMapValueInput" inputValue="{{ addMapValue }}" label="value..."></paper-input></td>
                         </tr>
                       </table>
                     </div>
@@ -208,7 +211,7 @@
                 </div>
               </div>
 
-
+              <!-- Custom Demo -->
               <div id="custom" class="demo-card" hero hero-id="custom-code">
                 <div class="container">
                   <paper-shadow z="1"></paper-shadow>
@@ -240,7 +243,7 @@
                         </tr>
                         <tr>
                           <td>Notes</td>
-                          <td><paper-input id="customNotesInput" on-keyup="{{ onNotesKeyup }}" label="notes..." value="{{ notes }}"></paper-input></td>
+                          <td><paper-input multiline id="customNotesInput" on-keyup="{{ onNotesKeyup }}" label="notes..." value="{{ notes }}"></paper-input></td>
                         </tr>
                         <tr>
                           <td>Rating</td>
@@ -253,8 +256,6 @@
               </div>
             </div>
           </section>
-
-
           <section>
             <div class="panel" hero hero-id="string-code">
               <div id="codePanel" class="red" hero hero-id="string-code-title">
@@ -299,8 +300,6 @@ function onStringChange (evt) {
               </div>
             </div>
           </section>
-
-
           <section>
             <div class="panel" hero hero-id="list-code">
               <div id="codePanel" class="purple" hero hero-id="list-code-title">
@@ -344,8 +343,6 @@ function onListChange (evt) {
               </div>
             </div>
           </section>
-
-
           <section>
             <div class="panel" hero hero-id="map-code">
               <div id="codePanel" class="green" hero hero-id="map-code-title">
@@ -398,8 +395,6 @@ function getValues () {
               </div>
             </div>
           </section>
-
-
           <section>
             <div class="panel" hero hero-id="custom-code">
               <div id="codePanel" class="yellow" hero hero-id="custom-code-title">
@@ -466,7 +461,6 @@ function onDirectorKeyup () {
               </div>
             </div>
           </section>
-
         </core-animated-pages>
       </div>
     </core-drawer-panel>

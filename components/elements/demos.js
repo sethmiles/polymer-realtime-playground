@@ -35,8 +35,6 @@ function onStringChange (evt) {
 
 
 
-
-
 // Collaborative List
 
 var app = {};
