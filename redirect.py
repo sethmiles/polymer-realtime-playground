@@ -29,7 +29,7 @@ class DefaultHandler(webapp2.RequestHandler):
 
 class SandboxRequestHandler(webapp2.RequestHandler):
   def get(self):
-    """Redirect to / and keeping the URL parameters."""
+    """Redirect to /sandbox and keeping the URL parameters."""
     if self.request.query_string:
       self.redirect('/sandbox/?' + self.request.query_string)
     else:
