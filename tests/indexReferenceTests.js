@@ -34,49 +34,23 @@ window.testSuite.load(new TestingClass('IndexReference', 'indexReferenceTests.js
 				this.indexReference.canBeDeleted == true;
 		}
 	})
-	.test({
-		description: 'addEventListener() - REFERENCE_SHIFTED',
+	.teardown({
 		run: function () {
-			var that = this;
-			this.alphaEvents = [];
-			this.alpha_callback = function (evt) {
-				that.alphaEvents.push(evt);
-			};
-			this.indexReference = testDocument1.list.registerReference(3, true);
-			this.indexReference.addEventListener(gapi.drive.realtime.EventType.REFERENCE_SHIFTED, this.alpha_callback);
-			testDocument2.list.insert(0,'z');
+			// Return the document back to it's original settings for subsequent tests
+			testDocument1.string.setText('');
+			testDocument1.list.clear();
+			testDocument1.map.set('key1', 1);
+			testDocument1.map.set('key2', 2);
+			testDocument3 = null;
 		},
 		assert: function () {
-			return this.alphaEvents.length == 1 &&
-				this.indexReference.index == 4;
-		}
-	})
-	.test({
-		description: 'removeEventListener() - REFERENCE_SHIFTED',
-		assertFor: 2000,
-		precondition: {
-			run: function () {
-				var that = this;
-				this.alphaEvents = [];
-				this.alpha_callback = function (evt) {
-					that.alphaEvents.push(evt);
-				};
-				this.indexReference = testDocument1.list.registerReference(3, true);
-				this.indexReference.addEventListener(gapi.drive.realtime.EventType.REFERENCE_SHIFTED, this.alpha_callback);
-				testDocument2.list.insert(0,'z');
-			},
-			assert: function () {
-				return this.alphaEvents.length == 1 &&
-					this.indexReference.index == 4;
-			}
-		},
-		run: function () {
-			this.alphaEvents = [];
-			this.indexReference.removeEventListener(gapi.drive.realtime.EventType.REFERENCE_SHIFTED, this.alpha_callback)
-			testDocument2.list.insert(0,'z');
-		},
-		assert: function () {
-			return this.alphaEvents.length == 0 &&
-				this.indexReference.index == 5;
+			return testDocument1.string.getText() == '' &&
+				testDocument1.list.asArray().length == 0 &&
+				testDocument1.map.get('key1') == 1 &&
+				testDocument1.map.get('key2') == 2 &&
+				testDocument2.string.getText() == '' &&
+				testDocument2.list.asArray().length == 0 &&
+				testDocument2.map.get('key1') == 1 &&
+				testDocument2.map.get('key2') == 2;
 		}
 	}));

@@ -1,8 +1,7 @@
 TestingClass = function (description, fileName) {
-	this.$el = $(this.el({
-		description: description
-	}));
-	this.$el.find('h2').on('click', function () {
+	this.el = this.createHTML(this.el);
+	this.el.querySelector('.test-class-description').textContent = description;
+	this.el.querySelector('.test-class-description').addEventListener('click', function () {
 		var url = window.location.origin + '/test?testPath=' + fileName;
 		var serverUrl = util.getParam('serverUrl');
 		if(serverUrl){
@@ -11,70 +10,49 @@ TestingClass = function (description, fileName) {
     window.open(url, '_blank');
 	});
 	this.tests = [];
-	this.$completed = this.$el.find('.completed');
-	this.$failed = this.$el.find('.failed');
-	this.$succeeded = this.$el.find('.succeeded');
-	this.continueExecution = _.bind(this.continueExecution, this);
+	this.completedEl = this.el.querySelector('.completed');
+	this.failedEl = this.el.querySelector('.failed');
+	this.succeededEl = this.el.querySelector('.succeeded');
+	this.continueExecution = this.continueExecution.bind(this);
 	return this;
 }
 
 TestingClass.prototype = {
 
-	timeout: 100,
+	testTimeout: 10000,
 
-	retryAttempts: 100,
+	retryInterval: 10,
 
-	el: _.template('<div class="test-class"><h2><%= description %></h2><div class="stats"><span class="completed"></span><span class="failed"></span><span class="succeeded"></span></div><div class="tests"></div></div>'),
+	el: '<div class="test-class"><h2 class="test-class-description"></h2><div class="stats"><span class="completed"></span><span class="failed"></span><span class="succeeded"></span></div><div class="tests"></div></div>',
 
-	testEl: _.template('<div class="test">' +
+	testEl: '<div class="test slide-hidden">' +
 							'<span class="description"><%= description %></span>' +
 							'<div class="test-result">' +
-								'<span class="result <%= result %>"><%= result %></span>' +
+								'<span class="result pending">pending</span>' +
 							'</div>' +
 							'<div class="code">' +
 								'<pre>' +
-									'<code class="javascript">' +
-										'// Test\n' +
-										'<%= run %>\n\n\n' +
-										'// Assertion\n' +
-										'<%= assert %>' +
-									'</code>' +
+									'<code class="javascript"></code>' +
 								'</pre>' +
 							'</div>' +
-						'</div>'),
+						'</div>',
 
 	test: function (test, index) {
-
-		var el = $(this.testEl({
-			description: test.description,
-			result: 'pending',
-			run: test.run.toString(),
-			assert: test.assert.toString()
-		}));
-
+		var el = this.createHTML(this.testEl);
+		el.querySelector('.description').textContent = test.description;
+		el.querySelector('.javascript').textContent = '// Test\n' + test.run.toString() + '\n\n\n' + '// Assertion\n' + test.assert.toString();
 		test.selector = el;
 
-		el.on('click', function () {
-			$(this).find('.code').slideToggle();
+		var highlighted = false;
+		el.querySelector('.description').addEventListener('click', function () {
+			if(!highlighted){
+				highlighted = true;
+				hljs.highlightBlock(el.querySelector('pre code'));
+			}
+			el.classList.toggle('slide-hidden');
 		});
-
-		hljs.highlightBlock(el.find('pre code')[0]);
-
-		if(typeof index == 'number'){
-			if(this.tests.length && this.tests[0].isSetup && index == 0){
-				// Cannot insert a test before the pretest occurs
-				index = 1;
-			}
-			if(index == 0){
-				this.$el.find('.tests').prepend(el);
-			} else {
-				this.$el.find('.tests div:nth-child(' + (index - 1) + ')').after(el);
-			}
-			this.tests.splice(index, 0, test);
-		} else {
-			this.$el.find('.tests').append(el);
-			this.tests.push(test);
-		}
+		this.el.querySelector('.tests').appendChild(el);
+		this.tests.push(test);
 
 		return this;
 	},
@@ -128,14 +106,38 @@ TestingClass.prototype = {
 		var success = false;
 
 		if(test.precondition){
-			// We need to wait for this condition to exist before proceeding...
 			test.precondition.description = "Precondition for " + test.description;
+
+			if(test.precondition instanceof Array){
+
+				function runPrecondition (array) {
+					if(!array.length){
+						test.precondition = null; // Completed the precondition
+						that.testIndex--;
+						that.continueExecution();
+					} else {
+						that.runNonNormalTest(array[0], function (success) {
+							if(!success) {
+								throw test.description + ' failed; cannot continue';			
+							} else {
+								array.shift();
+								runPrecondition(array);
+							}
+						});
+					}
+				}
+				// We have multiple ordered preconditions to fill before executing the test.
+				runPrecondition(test.precondition);
+
+				return;
+			}
+			
+			// We need to wait for this condition to exist before proceeding
 			this.runNonNormalTest(test.precondition, function (success) {
 				if(!success){
 					throw test.description + ' failed; cannot continue';
 				} else {
-					console.log("Test precondition met")
-					test.precondition = false; // Completed the precondition
+					test.precondition = null; // Completed the precondition
 					that.testIndex--;
 					that.continueExecution();
 				}
@@ -144,30 +146,33 @@ TestingClass.prototype = {
 		}
 
 		test.start = new Date().getTime();
+		test.end = test.start + (test.assertFor ? test.assertFor : this.testTimeout);
 		test.run.call(this);
+
 		var callback = function (success) {
 			var endTime = new Date().getTime();
 			if(test.isSetup && !success){
 				throw "Pretest failed, cannot continue";
 				return;
 			}
-			$(test.selector.find('.result'))
-				.text(endTime - test.start + 'ms - ' + (success ? 'passed' : 'failed'))
-				.removeClass('pending')
-				.addClass(success ? 'passed' : 'failed');
+			var resultEl = test.selector.querySelector('.result');
+			resultEl.textContent = endTime - test.start + 'ms - ' + (success ? 'passed' : 'failed');
+			resultEl.classList.remove('pending');
+			resultEl.classList.add((success ? 'passed' : 'failed'));
 			that.lib.testCompleted(success);
 			that.tallyTest(success);
 		}
-		that.attemptAssert(test, 0, callback);
+		that.attemptAssert(test, callback);
 	},
 
-	runNonNormalTest: function (hash, callback) {
-		var that = this;
-		hash.run.call(this);
-		this.attemptAssert(hash, 0, callback);
+	runNonNormalTest: function (test, callback) {
+		test.start = new Date().getTime();
+		test.end = test.start + (test.assertFor ? test.assertFor : this.testTimeout);
+		test.run.call(this);
+		this.attemptAssert(test, callback);
 	},
 
-	attemptAssert: function (test, attempt, callback) {
+	attemptAssert: function (test, callback) {
 		var that = this;
 		if(!test.assert){
 			if(test.isSetup || test.isTeardown){
@@ -177,7 +182,6 @@ TestingClass.prototype = {
 				throw "Test must have an assert function to evaluate test truth";
 			}
 		}
-		console.log(test.description + " - attempt # " + attempt);
 		var success;
 		try {
 			success = test.assert.call(this);
@@ -185,31 +189,27 @@ TestingClass.prototype = {
 			success = false;
 		}
 		var that = this;
-		if(success || (!success && attempt == this.retryAttempts)){
+		if(success || (new Date() > test.end)){
 			if(test.assertFor){
-				this.oldRetryAttempts = this.retryAttempts;
-				this.retryAttempts = Math.round(test.assertFor / this.timeout);
 				if(!success){
 					callback(success);
-					this.retryAttempts = this.oldRetryAttempts;
 					return;
-				} else if (attempt == this.retryAttempts) {
+				} else if (new Date() > test.end) {
 					callback(success);
-					this.retryAttempts = this.oldRetryAttempts;
 					return;
 				}
 			} else if(!test.isSetup && !test.isTeardown){
 				callback(success);
 				return;
-			} else if (test.isSetup && test.assert){
+			} else if ((test.isSetup && test.assert) || (test.isTeardown && test.assert)){
 				callback(success);
 				return;
 			}
 		}
 
 		setTimeout(function () {
-			that.attemptAssert(test, attempt + 1, callback);
-		}, this.timeout);
+			that.attemptAssert(test, callback);
+		}, this.retryInterval);
 	},
 
 	tallyTest: function (success) {
@@ -223,7 +223,7 @@ TestingClass.prototype = {
 		if (this.completedTestCount == this.getTestCount()){
 			// All done
 			if(this.teardownTest){
-				this.attemptAssert(this.teardownTest, 0, this.lib.testClassCompleted);
+				this.runNonNormalTest(this.teardownTest, this.lib.testClassCompleted);
 			} else {
 				this.lib.testClassCompleted();
 			}
@@ -237,17 +237,18 @@ TestingClass.prototype = {
 	},
 
 	updateUI: function () {
-		this.$completed.text('Completed Tests: '+ this.completedTestCount + '/' + this.getTestCount());
-		this.$succeeded.text('Succeeded: ' + this.successfulTests);
-		this.$failed.text('Failed: ' + this.failedTests);
-	},
-
-	setSynchronousTesting: function () {
-		this.isSynchronous = true;
-		return this;
+		this.completedEl.textContent = 'Completed Tests: '+ this.completedTestCount + '/' + this.getTestCount();
+		this.succeededEl.textContent = 'Succeeded: ' + this.successfulTests;
+		this.failedEl.textContent = 'Failed: ' + this.failedTests;
 	},
 
 	getTestCount: function () {
 		return this.tests.length;
+	},
+
+	createHTML: function (html) {
+		var div = document.createElement('div');
+		div.innerHTML = html;
+		return div.children[0];
 	}
 }

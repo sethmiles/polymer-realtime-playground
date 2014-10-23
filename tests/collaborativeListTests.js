@@ -1,6 +1,5 @@
 
 window.testSuite.load(new TestingClass('Collaborative List', 'collaborativeListTests.js')
-	.setSynchronousTesting()
 	.reset({
 		run: function () {
 			testDocument1.list.clear();
@@ -88,9 +87,16 @@ window.testSuite.load(new TestingClass('Collaborative List', 'collaborativeListT
 	})
 	.test({
 		description: 'clear()',
-		assertFor: 2000,
+		precondition: {
+			run: function () {
+				testDocument1.list.pushAll(['a','b','c'])
+			},
+			assert: function () {
+				return testDocument1.list.length == 3 &&
+				testDocument2.list.length == 3;
+			}
+		},
 		run: function () {
-			testDocument1.list.pushAll(['a','b','c'])
 			testDocument1.list.clear();
 		},
 		assert: function () {
@@ -186,131 +192,23 @@ window.testSuite.load(new TestingClass('Collaborative List', 'collaborativeListT
 				testDocument2.list.asArray().toString() == 'a,z,c';
 		}
 	})
-	.test({
-		description: 'addEventListener() - VALUES_ADDED',
+	.teardown({
 		run: function () {
-			var that = this;
-			this.alphaEvents = [];
-			this.betaEvents = [];
-			this.alpha_callback = function (evt) {
-				that.alphaEvents.push(evt);
-			};
-			this.beta_callback = function (evt) {
-				that.betaEvents.push(evt);
-			}
-			testDocument1.list.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, this.alpha_callback);
-			testDocument2.list.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, this.beta_callback);
-			testDocument1.list.push('a');
+			// Return the document back to it's original settings for subsequent tests
+			testDocument1.string.setText('');
+			testDocument1.list.clear();
+			testDocument1.map.set('key1', 1);
+			testDocument1.map.set('key2', 2);
+			testDocument3 = null;
 		},
 		assert: function () {
-			return this.alphaEvents.length == 1 &&
-				this.betaEvents.length == 1;
-		}
-	})
-	.test({
-		description: 'removeEventListener() - VALUES_ADDED',
-		assertFor: 2000,
-		run: function () {
-			this.alphaEvents = [];
-			this.betaEvents = [];
-			testDocument1.list.removeEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, this.alpha_callback)
-			testDocument2.list.removeEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, this.beta_callback)
-			testDocument1.list.push('a');
-		},
-		assert: function () {
-			return this.alphaEvents.length == 0 &&
-				this.betaEvents.length == 0;
-		}
-	})
-	.test({
-		description: 'addEventListener() - VALUES_SET',
-		run: function () {
-			var that = this;
-			this.alphaEvents = [];
-			this.betaEvents = [];
-			this.alpha_callback = function (evt) {
-				that.alphaEvents.push(evt);
-			};
-			this.beta_callback = function (evt) {
-				that.betaEvents.push(evt);
-			}
-			testDocument1.list.addEventListener(gapi.drive.realtime.EventType.VALUES_SET, this.alpha_callback);
-			testDocument2.list.addEventListener(gapi.drive.realtime.EventType.VALUES_SET, this.beta_callback);
-			testDocument1.list.push('a');
-			testDocument1.list.set(0, 'b');
-		},
-		assert: function () {
-			return this.alphaEvents.length == 1 &&
-				this.betaEvents.length == 1;
-		}
-	})
-	.test({
-		description: 'removeEventListener() - VALUES_SET',
-		assertFor: 2000,
-		run: function () {
-			this.alphaEvents = [];
-			this.betaEvents = [];
-			testDocument1.list.removeEventListener(gapi.drive.realtime.EventType.VALUES_SET, this.alpha_callback)
-			testDocument2.list.removeEventListener(gapi.drive.realtime.EventType.VALUES_SET, this.beta_callback)
-			testDocument1.list.push('a');
-			testDocument1.list.set(0, 'b');
-		},
-		assert: function () {
-			return this.alphaEvents.length == 0 &&
-				this.betaEvents.length == 0;
-		}
-	})
-	.test({
-		description: 'addEventListener() - VALUES_REMOVED',
-		precondition: {
-			run: function () {
-				testDocument1.list.push('a');
-			},
-			assert: function () {
-				return testDocument1.list.length == 1 &&
-					testDocument2.list.length == 1;
-			}
-		},
-		run: function () {
-			var that = this;
-			this.alphaEvents = [];
-			this.betaEvents = [];
-			this.alpha_callback = function (evt) {
-				that.alphaEvents.push(evt);
-			};
-			this.beta_callback = function (evt) {
-				that.betaEvents.push(evt);
-			}
-			testDocument1.list.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, this.alpha_callback);
-			testDocument2.list.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, this.beta_callback);
-			testDocument1.list.remove(0);
-		},
-		assert: function () {
-			return this.alphaEvents.length == 1 &&
-				this.betaEvents.length == 1;
-		}
-	})
-	.test({
-		description: 'removeEventListener() - VALUES_REMOVED',
-		assertFor: 2000,
-		precondition: {
-			run: function () {
-				testDocument1.list.push('a');
-			},
-			assert: function () {
-				return testDocument1.list.length == 1 &&
-					testDocument2.list.length == 1;
-			}
-		},
-		run: function () {
-			this.alphaEvents = [];
-			this.betaEvents = [];
-			testDocument1.list.removeEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, this.alpha_callback)
-			testDocument2.list.removeEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, this.beta_callback)
-			testDocument1.list.remove(0);
-		},
-		assert: function () {
-			return this.alphaEvents.length == 0 &&
-				this.betaEvents.length == 0;
+			return testDocument1.string.getText() == '' &&
+				testDocument1.list.asArray().length == 0 &&
+				testDocument1.map.get('key1') == 1 &&
+				testDocument1.map.get('key2') == 2 &&
+				testDocument2.string.getText() == '' &&
+				testDocument2.list.asArray().length == 0 &&
+				testDocument2.map.get('key1') == 1 &&
+				testDocument2.map.get('key2') == 2;
 		}
 	}));

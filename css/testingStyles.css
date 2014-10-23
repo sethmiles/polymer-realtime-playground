@@ -11,8 +11,16 @@ code span {
 	margin: 0 !important;
 }
 
+.hidden {
+	opacity: 0;
+	height: 0;
+	transition: all 1s;
+	-moz-transition:all 1s;
+	-webkit-transition: all 1s;
+	-ms-transition:all 1s;
+}
+
 .progress-bubbles {
-	display: none;
 	width: 150px;
 	height: 150px;
 	vertical-align: top;
@@ -47,6 +55,7 @@ code span {
 }
 
 .testing-container .right {
+	transition: all 1s;
 	float: right;
 }
 
@@ -110,6 +119,11 @@ code span {
 	font-size: 24px;
 }
 
+.test-class h2:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
 #testing-frame {
 	width: 100%;
 	height: 1000px;
@@ -127,10 +141,23 @@ code span {
 .test-class .test {
 	position: relative;
 	padding: 5px 0px;
+	transition: all 1s;
+	-moz-transition:all 1s;
+	-webkit-transition: all 1s;
+	-ms-transition:all 1s;
+	height: auto;
+	overflow: hidden;
+}
+
+.test-class .test.slide-hidden {
+	height: 20px;
+	transition: all 1s;
+	-moz-transition:all 1s;
+	-webkit-transition: all 1s;
+	-ms-transition:all 1s;
 }
 
 .test-class .test .code {
-	display: none;
 	padding: 10px;
 }
 

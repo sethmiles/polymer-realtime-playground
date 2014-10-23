@@ -14,8 +14,6 @@ Utils.prototype = {
   scopes: ['https://www.googleapis.com/auth/drive.install',
           'https://www.googleapis.com/auth/drive.file'],
 
-  openId: 'openid',
-
   init: function (options) {
     this.mergeOptions(options);
     this.authorizer = new Authorizer(this);
@@ -73,19 +71,21 @@ Utils.prototype = {
 
   onError: function(e) {
     if(e.type == window.gapi.drive.realtime.ErrorType.TOKEN_REFRESH_REQUIRED) {
-      authorizer.authorize();
+      this.authorizer.authorize(function () {
+        console.log('Error, auth refreshed');
+      }, false);
     } else if(e.type == window.gapi.drive.realtime.ErrorType.CLIENT_ERROR) {
       alert("An Error happened: " + e.message);
       window.location.href= "/";
     } else if(e.type == window.gapi.drive.realtime.ErrorType.NOT_FOUND) {
       alert("The file was not found. It does not exist or you do not have read access to the file.");
       window.location.href= "/";
+    } else if(e.type == window.gapi.drive.realtime.ErrorType.FORBIDDEN) {
+      alert("You do not have access to this file. Try having the owner share it with you from Google Drive.");
+      window.location.href= "/";
     }
   }
-  
 }
-
-
 
 
 Authorizer = function (util) {
@@ -96,6 +96,9 @@ Authorizer = function (util) {
 }
 
 Authorizer.prototype = {
+
+  refreshInterval: 1800000, // 30 minutes
+
   start: function(onAuthComplete, usePopup) {
     var config = {};
     if(this.serverUrl){
@@ -110,12 +113,16 @@ Authorizer.prototype = {
     window.gapi.load('auth:client,drive-realtime,drive-share', {
       config: config,
       callback:  function() {
-        that.authorize(usePopup, onAuthComplete);
+        that.authorize(onAuthComplete, usePopup);
       }
     });
+    if(this.authTimer){
+      this.authTimer.clear();
+    }
+    this.refreshAuth();
   },
 
-  authorize: function (usePopup, onAuthComplete) {
+  authorize: function (onAuthComplete, usePopup) {
     this.onAuthComplete = onAuthComplete;
     // Try with no popups first.
     window.gapi.auth.authorize({
@@ -131,5 +138,15 @@ Authorizer.prototype = {
       this.token = authResult.access_token;
     }
     this.onAuthComplete(authResult);
+  },
+
+  refreshAuth: function () {
+    var that = this;
+    this.authTimer = setTimeout(function () {
+      that.authorize(function(){
+        console.log('Refreshed Auth Token');
+      }, false);
+      that.refreshAuth();
+    }, this.refreshInterval);
   }
 }

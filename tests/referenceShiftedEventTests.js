@@ -1,15 +1,15 @@
 
-window.testSuite.load(new TestingClass('IndexReference', 'referenceShiftedEventTests.js')
+window.testSuite.load(new TestingClass('Reference Shifted Events', 'referenceShiftedEventTests.js')
 	.setup({
 		run: function () {
 			testDocument1.list.clear();
-			testDocument1.list.pushAll(['a','b','c','d']);
+			testDocument1.list.pushAll(['h','i','j','k']);
 		},
 		assert: function () {
 			return testDocument1.list.length == 4 &&
 				testDocument2.list.length == 4 &&
-				testDocument1.list.asArray().toString() == 'a,b,c,d' &&
-				testDocument2.list.asArray().toString() == 'a,b,c,d';
+				testDocument1.list.asArray().toString() == 'h,i,j,k' &&
+				testDocument2.list.asArray().toString() == 'h,i,j,k';
 		}
 	})
 	.test({
@@ -101,5 +101,25 @@ window.testSuite.load(new TestingClass('IndexReference', 'referenceShiftedEventT
 		run: function () {},
 		assert: function () {
 			return typeof this.alphaEvent.oldObject === 'object';
+		}
+	})
+	.teardown({
+		run: function () {
+			// Return the document back to it's original settings for subsequent tests
+			testDocument1.string.setText('');
+			testDocument1.list.clear();
+			testDocument1.map.set('key1', 1);
+			testDocument1.map.set('key2', 2);
+			testDocument3 = null;
+		},
+		assert: function () {
+			return testDocument1.string.getText() == '' &&
+				testDocument1.list.asArray().length == 0 &&
+				testDocument1.map.get('key1') == 1 &&
+				testDocument1.map.get('key2') == 2 &&
+				testDocument2.string.getText() == '' &&
+				testDocument2.list.asArray().length == 0 &&
+				testDocument2.map.get('key1') == 1 &&
+				testDocument2.map.get('key2') == 2;
 		}
 	}));

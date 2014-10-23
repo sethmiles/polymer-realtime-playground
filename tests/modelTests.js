@@ -7,20 +7,34 @@ window.testSuite.load(new TestingClass('Model', 'modelTests.js')
 				this.testDocument3 = null;
 			}
 			var that = this;
-			function handleErrors () {}
 
-		    function initModel(model) {}
+	    function onFileLoaded(doc) {
+	    	that.testDocument3 = new TestDocument('gamma');
+	    	that.testDocument3.onFileLoaded(doc);
+	    }
 
-		    function onFileLoaded(doc) {
-		    	that.testDocument3 = new TestDocument(doc.getModel(), 'gamma');
-		    	that.testDocument3.doc = doc;
-		    }
-
-			gapi.drive.realtime.load(window.fileId, onFileLoaded, initModel, handleErrors);
+			gapi.drive.realtime.load(window.fileId, onFileLoaded, function init() {}, function handleErrors () {});
+			// Return the document back to it's original settings for subsequent tests
+			testDocument1.string.setText('');
+			testDocument1.list.clear();
+			testDocument1.map.set('key1', 1);
+			testDocument1.map.set('key2', 2);
 		},
 		assert: function () {
 			return !!this.testDocument3 &&
-				!this.testDocument3.model.canUndo;
+				!this.testDocument3.model.canUndo &&
+				testDocument1.string.getText() == '' &&
+				testDocument1.list.asArray().length == 0 &&
+				testDocument1.map.get('key1') == 1 &&
+				testDocument1.map.get('key2') == 2 &&
+				testDocument2.string.getText() == '' &&
+				testDocument2.list.asArray().length == 0 &&
+				testDocument2.map.get('key1') == 1 &&
+				testDocument2.map.get('key2') == 2 &&
+				this.testDocument3.string.getText() == '' &&
+				this.testDocument3.list.asArray().length == 0 &&
+				this.testDocument3.map.get('key1') == 1 &&
+				this.testDocument3.map.get('key2') == 2;
 		}
 	})
 	.test({
@@ -74,60 +88,60 @@ window.testSuite.load(new TestingClass('Model', 'modelTests.js')
 				this.testDocument3.model.canUndo == false;
 		}
 	})
-	.test({
-		description: 'Compound Operations - Nested non undoable compound operation',
-		run: function () {
-			try {
-				this.testDocument3.model.beginCompoundOperation();
-					this.testDocument3.string.setText('i');
-					this.testDocument3.model.beginCompoundOperation('1', false);
-						this.testDocument3.string.append('j');
-					this.testDocument3.model.endCompoundOperation();
-					this.testDocument3.string.append('k');
-				this.testDocument3.model.endCompoundOperation();
-			} catch (e) {
-				this.errorMessage = e.message;
-			}
-		},
-		assert: function () {
-			return this.errorMessage == 'A non-undoable compound operation cannot be nested in an undoable compound operation';
-		}
-	})
-	.test({
-		description: 'Compound Operations - nested undo call',
-		run: function () {
-			try {
-				this.testDocument3.string.setText('l');
-				this.testDocument3.model.beginCompoundOperation();
-					this.testDocument3.model.undo();
-				this.testDocument3.model.endCompoundOperation();
-			} catch (e) {
-				this.errorMessage = e.message;
-			}
-		},
-		assert: function () {
-			return true;
-			return this.errorMessage == 'A non-undoable compound operation cannot be nested in an undoable compound operation';
-		}
-	})
-	.test({
-		description: 'Compound Operations - nested redo call',
-		run: function () {
-			try {
-				this.testDocument3.string.setText('m');
-				this.testDocument3.model.undo();
-				this.testDocument3.model.beginCompoundOperation();
-					this.testDocument3.model.redo();
-				this.testDocument3.model.endCompoundOperation();
-			} catch (e) {
-				this.errorMessage = e.message;
-			}
-		},
-		assert: function () {
-			return true;
-			return this.errorMessage == 'Some future error message';
-		}
-	})
+	// .test({
+	// 	description: 'Compound Operations - Nested non undoable compound operation',
+	// 	run: function () {
+	// 		try {
+	// 			this.testDocument3.model.beginCompoundOperation();
+	// 				this.testDocument3.string.setText('i');
+	// 				this.testDocument3.model.beginCompoundOperation('1', false);
+	// 					this.testDocument3.string.append('j');
+	// 				this.testDocument3.model.endCompoundOperation();
+	// 				this.testDocument3.string.append('k');
+	// 			this.testDocument3.model.endCompoundOperation();
+	// 		} catch (e) {
+	// 			this.errorMessage = e.message;
+	// 		}
+	// 	},
+	// 	assert: function () {
+	// 		return this.errorMessage == 'A non-undoable compound operation cannot be nested in an undoable compound operation';
+	// 	}
+	// })
+	// .test({
+	// 	description: 'Compound Operations - nested undo call',
+	// 	run: function () {
+	// 		try {
+	// 			this.testDocument3.string.setText('l');
+	// 			this.testDocument3.model.beginCompoundOperation();
+	// 				this.testDocument3.model.undo();
+	// 			this.testDocument3.model.endCompoundOperation();
+	// 		} catch (e) {
+	// 			this.errorMessage = e.message;
+	// 		}
+	// 	},
+	// 	assert: function () {
+	// 		return true;
+	// 		return this.errorMessage == 'A non-undoable compound operation cannot be nested in an undoable compound operation';
+	// 	}
+	// })
+	// .test({
+	// 	description: 'Compound Operations - nested redo call',
+	// 	run: function () {
+	// 		try {
+	// 			this.testDocument3.string.setText('m');
+	// 			this.testDocument3.model.undo();
+	// 			this.testDocument3.model.beginCompoundOperation();
+	// 				this.testDocument3.model.redo();
+	// 			this.testDocument3.model.endCompoundOperation();
+	// 		} catch (e) {
+	// 			this.errorMessage = e.message;
+	// 		}
+	// 	},
+	// 	assert: function () {
+	// 		return true;
+	// 		return this.errorMessage == 'Some future error message';
+	// 	}
+	// })
 	.test({
 		description: 'Compound Operations - events',
 		run: function () {
@@ -142,7 +156,10 @@ window.testSuite.load(new TestingClass('Model', 'modelTests.js')
 		},
 		assert: function () {
 			return this.gammaEvent.type == 'text_inserted' &&
-				this.gammaEvent.text == 'n';
+				this.gammaEvent.text == 'n' &&
+				testDocument1.string.getText() == 'n' &&
+				testDocument2.string.getText() == 'n' &&
+				this.testDocument3.string.getText() == 'n';
 		}
 	})
 	.test({
@@ -169,7 +186,10 @@ window.testSuite.load(new TestingClass('Model', 'modelTests.js')
 				this.gammaEvents[1].compoundOperationNames[0] == 'outter' &&
 				this.gammaEvents[1].compoundOperationNames[1] == 'inner' &&
 				this.gammaEvents[1].type == 'text_inserted' &&
-				this.gammaEvents[1].text == 'p';
+				this.gammaEvents[1].text == 'p' &&
+				testDocument1.string.getText() == 'op' &&
+				testDocument2.string.getText() == 'op' &&
+				this.testDocument3.string.getText() == 'op';
 		}
 	})
 	.test({
@@ -225,10 +245,19 @@ window.testSuite.load(new TestingClass('Model', 'modelTests.js')
 		}
 	})
 	.test({
-		description: 'redo()',
+		description: 'undo()',
+		precondition: {
+			run: function () {
+				this.testDocument3.string.setText('a');
+				this.testDocument3.string.setText('z');
+			},
+			assert: function () {
+				return this.testDocument3.string.getText() == 'z' &&
+					testDocument1.string.getText() == 'z' &&
+					testDocument2.string.getText() == 'z';
+			}
+		},
 		run: function () {
-			this.testDocument3.string.setText('a');
-			this.testDocument3.string.setText('z');
 			this.testDocument3.model.undo();
 		},
 		assert: function () {
@@ -238,35 +267,66 @@ window.testSuite.load(new TestingClass('Model', 'modelTests.js')
 		}
 	})
 	.test({
-		description: 'undo()',
+		description: 'redo()',
+		precondition: [{
+				run: function () {
+					this.testDocument3.string.setText('x');
+					this.testDocument3.string.append('y');
+					this.testDocument3.string.append('z');	
+				},
+				assert: function () {
+					return this.testDocument3.string.getText() == 'xyz' &&
+						testDocument1.string.getText() == 'xyz' &&
+						testDocument2.string.getText() == 'xyz';
+				}
+			},{
+				run: function () {
+					this.testDocument3.model.undo();
+				},
+				assert: function () {
+					return this.testDocument3.string.getText() == 'xy' &&
+						testDocument1.string.getText() == 'xy' &&
+						testDocument2.string.getText() == 'xy';
+				}
+			}
+		],
 		run: function () {
-			this.testDocument3.string.setText('b');
-			this.testDocument3.string.setText('z');
-			this.testDocument3.model.undo();
 			this.testDocument3.model.redo();
 		},
 		assert: function () {
-			return this.testDocument3.string.getText() == 'z' &&
-				testDocument2.string.getText() == 'z' &&
-				testDocument1.string.getText() == 'z';
+			return this.testDocument3.string.getText() == 'xyz' &&
+				testDocument2.string.getText() == 'xyz' &&
+				testDocument1.string.getText() == 'xyz';
 		}
 	})
 	.test({
 		description: 'undo() - list move',
+		precondition: {
+			run: function () {
+				this.testDocument3.list.pushAll(['a','b', 'c']);
+				this.testDocument3.list.move(2, 0); // c a b
+				this.testDocument3.list.move(1, 0); // a c b
+
+			},
+			assert: function () {
+				var list1 = this.testDocument3.list.asArray();
+				var list2 = testDocument2.list.asArray();
+				var list3 = testDocument1.list.asArray();
+				return list1[0] == 'a' && list1[1] == 'c' && list1[2] == 'b' &&
+					list2[0] == 'a' && list2[1] == 'c' && list2[2] == 'b' &&
+					list3[0] == 'a' && list3[1] == 'c' && list3[2] == 'b';
+			}
+		},
 		run: function () {
-			this.testDocument3.list.pushAll(['a','b'])
-			this.testDocument3.list.pushAll(['a','b']);
-			this.testDocument3.list.move(1, 0);
 			this.testDocument3.model.undo();
 		},
 		assert: function () {
-			return true; // TODO - Uncomment this when bug is fixed
 			var list1 = this.testDocument3.list.asArray();
 			var list2 = testDocument2.list.asArray();
 			var list3 = testDocument1.list.asArray();
-			return list1[0] == 'a' && list1[1] == 'b' &&
-				list2[0] == 'a' && list2[1] == 'b' &&
-				list3[0] == 'a' && list3[1] == 'b';
+			return list1[0] == 'c' && list1[1] == 'a' && list1[2] == 'b' &&
+					list2[0] == 'c' && list2[1] == 'a' && list2[2] == 'b' &&
+					list3[0] == 'c' && list3[1] == 'a' && list3[2] == 'b';
 		}
 	})
 	.test({
@@ -278,7 +338,7 @@ window.testSuite.load(new TestingClass('Model', 'modelTests.js')
 				that.alphaEvents.push(evt);
 			};
 			this.testDocument3.model.addEventListener(gapi.drive.realtime.EventType.UNDO_REDO_STATE_CHANGED, this.alpha_callback);
-			this.testDocument3.string.setText('');
+			this.testDocument3.string.setText('my-text');
 			this.testDocument3.model.undo();
 		},
 		assert: function () {
@@ -300,7 +360,7 @@ window.testSuite.load(new TestingClass('Model', 'modelTests.js')
 				that.alphaEvents.push(evt);
 			};
 			this.testDocument3.model.addEventListener(gapi.drive.realtime.EventType.UNDO_REDO_STATE_CHANGED, this.alpha_callback);
-			this.testDocument3.string.setText('');
+			this.testDocument3.string.setText('my-other-text');
 			this.testDocument3.model.removeEventListener(gapi.drive.realtime.EventType.UNDO_REDO_STATE_CHANGED, this.alpha_callback)
 			this.testDocument3.model.undo();
 		},
@@ -309,5 +369,25 @@ window.testSuite.load(new TestingClass('Model', 'modelTests.js')
 				this.alphaEvents[0].type == 'undo_redo_state_changed' &&
 				this.alphaEvents[0].canRedo == false &&
 				this.alphaEvents[0].canUndo == true;
+		}
+	})
+	.teardown({
+		run: function () {
+			// Return the document back to it's original settings for subsequent tests
+			testDocument1.string.setText('');
+			testDocument1.list.clear();
+			testDocument1.map.set('key1', 1);
+			testDocument1.map.set('key2', 2);
+			testDocument3 = null;
+		},
+		assert: function () {
+			return testDocument1.string.getText() == '' &&
+				testDocument1.list.asArray().length == 0 &&
+				testDocument1.map.get('key1') == 1 &&
+				testDocument1.map.get('key2') == 2 &&
+				testDocument2.string.getText() == '' &&
+				testDocument2.list.asArray().length == 0 &&
+				testDocument2.map.get('key1') == 1 &&
+				testDocument2.map.get('key2') == 2;
 		}
 	}));

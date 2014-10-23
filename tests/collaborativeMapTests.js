@@ -113,39 +113,23 @@ window.testSuite.load(new TestingClass('Collaborative Map', 'collaborativeMapTes
 				(values2 == '2,1' || values2 == '1,2');
 		}
 	})
-	.test({
-		description: 'addEventListener() - VALUE_CHANGED',
+	.teardown({
 		run: function () {
-			var that = this;
-			this.alphaEvents = [];
-			this.betaEvents = [];
-			this.alpha_callback = function (evt) {
-				that.alphaEvents.push(evt);
-			};
-			this.beta_callback = function (evt) {
-				that.betaEvents.push(evt);
-			}
-			testDocument1.map.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, this.alpha_callback);
-			testDocument2.map.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, this.beta_callback);
-			testDocument1.map.set('key1', 'z');
+			// Return the document back to it's original settings for subsequent tests
+			testDocument1.string.setText('');
+			testDocument1.list.clear();
+			testDocument1.map.set('key1', 1);
+			testDocument1.map.set('key2', 2);
+			testDocument3 = null;
 		},
 		assert: function () {
-			return this.alphaEvents.length == 1 &&
-				this.betaEvents.length == 1;
-		}
-	})
-	.test({
-		description: 'removeEventListener() - VALUE_CHANGED',
-		assertFor: 2000,
-		run: function () {
-			this.alphaEvents = [];
-			this.betaEvents = [];
-			testDocument1.map.removeEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, this.alpha_callback)
-			testDocument2.map.removeEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, this.beta_callback)
-			testDocument1.map.set('key1', 'z');
-		},
-		assert: function () {
-			return this.alphaEvents.length == 0 &&
-				this.betaEvents.length == 0;
+			return testDocument1.string.getText() == '' &&
+				testDocument1.list.asArray().length == 0 &&
+				testDocument1.map.get('key1') == 1 &&
+				testDocument1.map.get('key2') == 2 &&
+				testDocument2.string.getText() == '' &&
+				testDocument2.list.asArray().length == 0 &&
+				testDocument2.map.get('key1') == 1 &&
+				testDocument2.map.get('key2') == 2;
 		}
 	}));
