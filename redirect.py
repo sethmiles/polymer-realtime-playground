@@ -27,17 +27,7 @@ class DefaultHandler(webapp2.RequestHandler):
     else:
       self.redirect('/')
 
-class SandboxRequestHandler(webapp2.RequestHandler):
-  def get(self):
-    """Redirect to /sandbox and keeping the URL parameters."""
-    if self.request.query_string:
-      self.redirect('/sandbox/?' + self.request.query_string)
-    else:
-      self.redirect('/sandbox')
-
-
 DEFAULT_ROUTES = [
-    (r'/sandbox/.*', SandboxRequestHandler),
     (r'/.*', DefaultHandler)
 ]
 
