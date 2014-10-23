@@ -97,4 +97,3 @@ FunctionalTesting.prototype = {
 		return div.children[0];
 	}
 }
-
