@@ -10,8 +10,6 @@ FunctionalTesting = function (title) {
 	this.completedEl = this.headerEl.querySelector('.completed');
 	this.failedEl = this.headerEl.querySelector('.failed');
 	this.succeededEl = this.headerEl.querySelector('.succeeded');
-	this.progressBubbles = new ProgressBubbles(this.totalTests);
-	this.headerEl.querySelector('.right').appendChild(this.progressBubbles.el);
 	this.testClassCompleted = this.testClassCompleted.bind(this);
 
 }
@@ -22,7 +20,7 @@ FunctionalTesting.prototype = {
 								'<div class="header">' +
 									'<div class="left">' +
 										'<div class="title"></div>' +
-										'<div class="loader"></div>' +
+										'<paper-spinner class="loader"></paper-spinner>' +
 										'<div class="totalResults">' +
 											'<span class="completed"></span><span class="failed"></span><span class="succeeded"></span>' +
 										'</div>' +
@@ -46,7 +44,6 @@ FunctionalTesting.prototype = {
 		this.totalTests += testingClass.getTestCount();
 		this.testsEl.appendChild(testingClass.el);
 		this.updateUI();
-		this.progressBubbles.updateTestCount(this.totalTests);
 	},
 
 	execute: function () {
@@ -70,7 +67,6 @@ FunctionalTesting.prototype = {
 		} else {
 			this.failedTests++;
 		}
-		this.progressBubbles.addData(success);
 		this.updateUI();
 	},
 
