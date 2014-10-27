@@ -134,7 +134,7 @@ Authorizer.prototype = {
       }
     });
     if(this.authTimer){
-      this.authTimer.clear();
+      window.clearTimeout(this.authTimer);
     }
     this.refreshAuth();
   },
