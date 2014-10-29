@@ -9,13 +9,16 @@ Polymer({
 
   documentChanged: function (evt, doc) {
     this.doc = doc;
+    window.doc = doc;
     this.collaborators = doc.getCollaborators();
 
-    this.stringDemo = doc.getModel().getRoot().get('demo_string');
-    this.listDemo = doc.getModel().getRoot().get('demo_list');
-    this.cursorsDemo = doc.getModel().getRoot().get('demo_cursors');
-    this.mapDemo = doc.getModel().getRoot().get('demo_map');
-    this.customDemo = doc.getModel().getRoot().get('demo_custom');
+    this.model = doc.getModel();
+
+    this.stringDemo = this.model.getRoot().get('demo_string');
+    this.listDemo = this.model.getRoot().get('demo_list');
+    this.cursorsDemo = this.model.getRoot().get('demo_cursors');
+    this.mapDemo = this.model.getRoot().get('demo_map');
+    this.customDemo = this.model.getRoot().get('demo_custom');
 
     this.setupModel();
     this.setupCollaborators();
@@ -236,6 +239,9 @@ Polymer({
   },
 
   onMapItemClick: function (evt, no, el) {
+    if(model.isReadOnly){
+      return;
+    }
     this.selectedMapItemKey = el.querySelector('.mapKey').textContent;
   },
 

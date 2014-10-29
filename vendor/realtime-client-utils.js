@@ -120,8 +120,11 @@ Authorizer.prototype = {
           this.apiUrl = 'https://drive.google.com/otservice/scary';
           this.serverUrl = 'https://drive.google.com/otservice';
           break;
+        default:
+          this.apiUrl = this.serverUrl;
       }
       config['drive-realtime'] =  { 'server' : this.apiUrl };
+      config['root'] = 'https://content-googleapis-test.sandbox.google.com';
     }
     var that = this;
     window.gapi.load('auth:client,drive-realtime,drive-share', {

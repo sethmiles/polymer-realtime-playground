@@ -53,6 +53,7 @@ Polymer({
   },
 
   onFileLoaded: function (doc) {
+    window.doc = doc;
     this.$.createPage.selected = 0;
     this.$.loader1.classList.add('hidden');
     this.$.name.value = '';

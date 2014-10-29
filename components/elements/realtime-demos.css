@@ -34,6 +34,14 @@
   color: white;
 }
 
+.doc-sub-title {
+  position: absolute;
+  left: 10%;
+  top: 161px;
+  font-size: 20px;
+  color: white;
+}
+
 @media (min-width: 1090px) {
   #back-icon {
     left: calc(((100% - 350px) / 20) - 25px) !important;  
