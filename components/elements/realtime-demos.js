@@ -5,6 +5,10 @@ Polymer({
     this.$.drawer.selected = 0;
     this.document = null;
     this.documentTitle = "loading . . ."
+    this.documentTitleBaseUrl = 'https://www.googleapis.com'
+    if(this.util.getParam('serverUrl') == 'sandbox'){
+      this.documentTitleBaseUrl = 'https://content-googleapis-test.sandbox.google.com';
+    }
   },
 
   documentChanged: function (evt, doc) {

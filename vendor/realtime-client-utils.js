@@ -63,9 +63,10 @@ Utils.prototype = {
         }
       }
       
-      if(that.getParam('serverUrl')){
+      if(that.authorizer.unknownServerUrl || that.authorizer.sandboxUrl){
         insertHash.root = 'https://content-googleapis-test.sandbox.google.com';
       }
+
       window.gapi.client.drive.files.insert(insertHash).execute(callback);
     });
   },
@@ -109,6 +110,7 @@ Authorizer.prototype = {
     if(this.serverUrl){
       switch(this.serverUrl){
         case 'sandbox':
+          this.sandboxUrl = true;
           this.apiUrl = 'https://drive.sandbox.google.com/otservice';
           this.serverUrl = this.apiUrl;
           break;
@@ -121,10 +123,10 @@ Authorizer.prototype = {
           this.serverUrl = 'https://drive.google.com/otservice';
           break;
         default:
+          this.unknownServerUrl = true;
           this.apiUrl = this.serverUrl;
       }
       config['drive-realtime'] =  { 'server' : this.apiUrl };
-      config['root'] = 'https://content-googleapis-test.sandbox.google.com';
     }
     var that = this;
     window.gapi.load('auth:client,drive-realtime,drive-share', {

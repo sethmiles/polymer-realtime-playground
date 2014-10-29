@@ -59,7 +59,7 @@ Polymer({
     this.$.name.value = '';
     this.$.create.disabled = false;
     var serverUrl = this.util.getParam('serverUrl');
-    window.history.pushState("object or string", "Title", "?id=" + this.documentId + (serverUrl ? "serverUrl=" + serverUrl : ""));
+    window.history.pushState("object or string", "Title", "?id=" + this.documentId + (serverUrl ? "&serverUrl=" + serverUrl : ""));
     this.fire('core-signal', { 
       name:'file-loaded', 
       data: { 
