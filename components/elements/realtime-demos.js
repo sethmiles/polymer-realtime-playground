@@ -59,13 +59,22 @@ Polymer({
     this.onCollaboratorChange = this.onCollaboratorChange.bind(this);
     this.doc.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_JOINED, this.onCollaboratorChange);
     this.doc.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_LEFT, this.onCollaboratorChange);
+    this.setMyColor();
   },
 
   onCollaboratorChange: function () {
     this.collaborators = this.doc.getCollaborators();
+    this.setMyColor();
     this.garbageCollectCursors();
   },
 
+  setMyColor: function () {
+    for(var i = 0; i < this.collaborators.length; i++){
+      if(this.collaborators[i].isMe){
+        this.myColor = this.collaborators[i].color;
+      }
+    }
+  },
 
   // Collaborative String Methods
   setupCollaborativeString: function () {
@@ -238,7 +247,7 @@ Polymer({
   },
 
   onMapItemClick: function (evt, no, el) {
-    if(model.isReadOnly){
+    if(this.model.isReadOnly){
       return;
     }
     this.selectedMapItemKey = el.querySelector('.mapKey').textContent;

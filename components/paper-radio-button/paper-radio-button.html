@@ -58,6 +58,15 @@ To change the radio unchecked color:
 
   <link rel="stylesheet" href="paper-radio-button.css">
 
+  <style>
+    #onRadio {
+      background-color: {{ color }} !important;
+    }
+    #ink {
+      color: {{ color }} !important;
+    }
+  </style>
+
   <core-a11y-keys target="{{}}" keys="space" on-keys-pressed="{{tap}}"></core-a11y-keys>
   
   <div id="radioContainer" class="{{ {labeled: label} | tokenList }}">
@@ -106,6 +115,11 @@ To change the radio unchecked color:
        * @default ''
        */
       label: '',
+
+      /**
+      * The users color
+      */
+      color: '',
       
       /**
        * Normally the user cannot uncheck the radio button by tapping once

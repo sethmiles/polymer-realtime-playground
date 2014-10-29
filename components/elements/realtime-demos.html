@@ -128,7 +128,7 @@
                       <div class="list-title">List Items</div>
                       <paper-radio-group id="listDemoGroup" selected="{{ selectedItem }}" on-change="{{ onRadioChange }}">
                         <template repeat="{{ listItem in collaborativeList }}">
-                          <paper-radio-button disabled?="{{ model.isReadOnly }}" name="{{ listItem }}" label="{{ listItem }}"></paper-radio-button>
+                          <paper-radio-button disabled?="{{ model.isReadOnly }}" name="{{ listItem }}" label="{{ listItem }}" color="{{ myColor }}"></paper-radio-button>
                         </template>
                       </paper-radio-group>
                     </div>
