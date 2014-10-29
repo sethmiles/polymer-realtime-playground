@@ -9,7 +9,6 @@ Polymer({
 
   documentChanged: function (evt, doc) {
     this.doc = doc;
-    window.doc = doc;
     this.collaborators = doc.getCollaborators();
 
     this.model = doc.getModel();
