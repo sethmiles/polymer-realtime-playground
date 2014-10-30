@@ -42,12 +42,24 @@ FunctionalTesting.prototype = {
 	load: function (testingClass) {
 		this.testingClasses.push(testingClass);
 		this.totalTests += testingClass.getTestCount();
-		this.testsEl.appendChild(testingClass.el);
 		this.updateUI();
 	},
 
 	execute: function () {
 		this.index = -1;
+		var that = this;
+		this.testingClasses.sort(function(a,b){
+			if(a.title == b.title){
+				return 0;
+			} else if(a.title < b.title){
+				return -1;
+			} else {
+				return 1;
+			}
+		});
+		this.testingClasses.forEach(function(testingClass){
+			that.testsEl.appendChild(testingClass.el);
+		});
 		this.headerEl.querySelector('.right').classList.remove('hidden');
 		this.headerEl.querySelector('.loader').classList.add('hidden');
 		this.next();
