@@ -72,11 +72,12 @@ Utils.prototype = {
   },
 
   load: function(documentId, onFileLoaded, initializeModel) {
+    var that = this;
     window.gapi.drive.realtime.load(documentId, function(doc){
       if(that.getParam('serverUrl')){
         window.doc = doc;  // Debugging purposes
       }
-      onFileLoaded()
+      onFileLoaded(doc)
     }, initializeModel, this.onError);
   },
 
