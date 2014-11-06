@@ -3,7 +3,7 @@ var BOOLEAN_KEY = "boolean",
   DOUBLE_KEY = "double",
   DOUBLE_VAL = 3.2,
   STRING_KEY = "string",
-  STRING_VAL = "<hi>";
+  STRING_VAL = "\"<hi>\"";
 
 window.testSuite.load(new TestingClass('Document Import Tests', 'documentImportTests.js')
   .test({
@@ -82,11 +82,76 @@ window.testSuite.load(new TestingClass('Document Import Tests', 'documentImportT
   description: 'Importing Collaborative Lists',
   run: function () {
     var model = window.inMemoryDocument.getModel();
-    model.getRoot().set('list', model.createList(['"ha"', "{\"inner\":\"testvalue\"}"]));
+    model.getRoot().set('list2', model.createList(['"ha"', "{\"inner\":\"testvalue\"}"]));
   },
   assert: function () {
     var doc = window.inMemoryDocument;
     return assertDocumentEquality(doc, gapi.drive.realtime.loadFromJson(doc.toJson()));
+  }
+})
+.test({
+  description: 'Invalid Json Syntax - INVALID_JSON_SYNTAX',
+  run: function () {
+    try {
+      gapi.drive.realtime.loadFromJson(',');
+    } catch (e) {
+      this.error = e;
+    }
+  },
+  assert: function () {
+    return this.error.type === gapi.drive.realtime.ErrorType.INVALID_JSON_SYNTAX;
+  }
+})
+.test({
+  description: 'Invalid Root Type - UNEXPECTED_ELEMENT',
+  run: function () {
+    try {
+      gapi.drive.realtime.loadFromJson('[1]');
+    } catch (e) {
+      this.error = e;
+    }
+  },
+  assert: function () {
+    return this.error.type === gapi.drive.realtime.ErrorType.UNEXPECTED_ELEMENT;
+  }
+})
+.test({
+  description: 'Invalid Type Key - UNEXPECTED_ELEMENT',
+  run: function () {
+    try {
+      gapi.drive.realtime.loadFromJson("{\"data\":3}");
+    } catch (e) {
+      this.error = e;
+    }
+  },
+  assert: function () {
+    return this.error.type === gapi.drive.realtime.ErrorType.UNEXPECTED_ELEMENT;
+  }
+})
+.test({
+  description: 'Missing Property - MISSING_PROPERTY',
+  run: function () {
+    try {
+      gapi.drive.realtime.loadFromJson("{\"data\":{\"type\": \"Map\"}}");
+    } catch (e) {
+      this.error = e;
+    }
+  },
+  assert: function () {
+    return this.error.type === gapi.drive.realtime.ErrorType.MISSING_PROPERTY;
+  }
+})
+.test({
+  description: 'Missing Data - UNEXPECTED_ELEMENT',
+  run: function () {
+    try {
+      gapi.drive.realtime.loadFromJson('{}');
+    } catch (e) {
+      this.error = e;
+    }
+  },
+  assert: function () {
+    return this.error.type === gapi.drive.realtime.ErrorType.UNEXPECTED_ELEMENT;
   }
 }));
 

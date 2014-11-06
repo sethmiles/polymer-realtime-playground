@@ -44,9 +44,9 @@ window.testSuite.load(new TestingClass('Document Serialization', 'documentSerial
       var json = JSON.parse(window.inMemoryDocument.toJson());
       return json[OBJECT_ID_KEY] == 'root' &&
         json[OBJECT_TYPE_KEY] == 'Map' &&
-        JSON.parse(json[OBJECT_VALUE_KEY][DOUBLE_KEY][JSON_TYPE]) === DOUBLE_VAL &&
-        JSON.parse(json[OBJECT_VALUE_KEY][STRING_KEY][JSON_TYPE]) === STRING_VAL &&
-        JSON.parse(json[OBJECT_VALUE_KEY][BOOLEAN_KEY][JSON_TYPE]) === BOOLEAN_VAL;
+        json[OBJECT_VALUE_KEY][DOUBLE_KEY][JSON_TYPE] === DOUBLE_VAL &&
+        json[OBJECT_VALUE_KEY][STRING_KEY][JSON_TYPE] === STRING_VAL &&
+        json[OBJECT_VALUE_KEY][BOOLEAN_KEY][JSON_TYPE] === BOOLEAN_VAL;
     }
   })
   .test({
@@ -94,8 +94,8 @@ window.testSuite.load(new TestingClass('Document Serialization', 'documentSerial
         json[OBJECT_TYPE_KEY] === MAP_TYPE_VALUE &&
         model.getRoot().get('list').getId() === root.list[OBJECT_ID_KEY] &&
         root.list[OBJECT_TYPE_KEY] === LIST_TYPE_VALUE &&
-        JSON.parse(array[0][JSON_TYPE]) === model.getRoot().get('list').get(0) &&
-        JSON.parse(array[1][JSON_TYPE]) === model.getRoot().get('list').get(1) &&
+        array[0][JSON_TYPE] === model.getRoot().get('list').get(0) &&
+        array[1][JSON_TYPE] === model.getRoot().get('list').get(1) &&
         root.ref1[OBJECT_TYPE_KEY] === INDEX_REFERENCE_TYPE_VALUE &&
         root.ref2[OBJECT_TYPE_KEY] === INDEX_REFERENCE_TYPE_VALUE &&
         ref1[INDEX_REFERENCE_OBJECT_ID_KEY] === model.getRoot().get('list').getId() &&
@@ -134,17 +134,17 @@ window.testSuite.load(new TestingClass('Document Serialization', 'documentSerial
   description: 'Serializing Collaborative Lists',
   run: function () {
     var model = window.inMemoryDocument.getModel();
-    model.getRoot().set('list', model.createList(['"ha"', "{\"inner\":\"testvalue\"}"]));
+    model.getRoot().set('list2', model.createList(['"ha"', { inner: 'testvalue' }]));
   },
   assert: function () {
     var json = JSON.parse(window.inMemoryDocument.toJson());
     var root = json[OBJECT_VALUE_KEY];
     var model = window.inMemoryDocument.getModel();
-    var values = root.list[OBJECT_VALUE_KEY];
+    var values = root.list2[OBJECT_VALUE_KEY];
 
-    return root.list[OBJECT_ID_KEY] === model.getRoot().get('list').getId() &&
-      root.list[OBJECT_TYPE_KEY] === LIST_TYPE_VALUE &&
-      JSON.parse(values[0][JSON_TYPE]) === '"ha"';
-      JSON.parse(values[1][JSON_TYPE])['inner'] === 'testvalue';
+    return root.list2[OBJECT_ID_KEY] === model.getRoot().get('list2').getId() &&
+      root.list2[OBJECT_TYPE_KEY] === LIST_TYPE_VALUE &&
+      values[0][JSON_TYPE] === '"ha"' &&
+      values[1][JSON_TYPE]['inner'] === 'testvalue';
   }
 }));
