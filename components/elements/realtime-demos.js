@@ -28,7 +28,10 @@ Polymer({
     this.setupCollaborativeString();
     this.setupCollaborativeList();
     this.setupCollaborativeMap();
-    this.setupCustomObject(); 
+
+    if(this.customDemo) {
+      this.setupCustomObject(); 
+    }
     
     this.$.drawer.selected = 1;
     this.eventsList = [];

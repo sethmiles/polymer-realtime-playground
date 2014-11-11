@@ -112,7 +112,7 @@ window.testSuite.load(new TestingClass('Document Import Tests', 'documentImportT
     }
   },
   assert: function () {
-    return this.error.type === gapi.drive.realtime.ErrorType.UNEXPECTED_ELEMENT;
+    return this.error.getMessage().indexOf('Expected root or collaborative object') === 0;
   }
 })
 .test({
@@ -125,7 +125,7 @@ window.testSuite.load(new TestingClass('Document Import Tests', 'documentImportT
     }
   },
   assert: function () {
-    return this.error.type === gapi.drive.realtime.ErrorType.UNEXPECTED_ELEMENT;
+    return this.error.getMessage().indexOf('Expected root or collaborative object') === 0;
   }
 })
 .test({
@@ -151,7 +151,7 @@ window.testSuite.load(new TestingClass('Document Import Tests', 'documentImportT
     }
   },
   assert: function () {
-    return this.error.type === gapi.drive.realtime.ErrorType.UNEXPECTED_ELEMENT;
+    return this.error.getMessage().indexOf('Expected root or collaborative object') === 0;
   }
 }));
 
