@@ -22,10 +22,16 @@
         }
       }
 
+      var shareClient;
+      gapi.load('drive-share', function () {
+        shareClient = new gapi.drive.share.ShareClient(util.options.appId);
+      });
+
       Polymer({
         ready: function () {
           this.util = util;
           this.Movie = Movie;
+          this.shareClient = shareClient;
         }
       });
     })(window.Utils);
