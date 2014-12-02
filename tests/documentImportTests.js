@@ -5,7 +5,7 @@ var BOOLEAN_KEY = "boolean",
   STRING_KEY = "string",
   STRING_VAL = "\"<hi>\"";
 
-window.testSuite.load(new TestingClass('Document Import Tests', 'documentImportTests.js')
+window.testSuite.load(new TestingClass('Client Document Import Tests', 'clientDocumentImportTests.js')
   .test({
     precondition: {
       run: function () {
@@ -21,7 +21,7 @@ window.testSuite.load(new TestingClass('Document Import Tests', 'documentImportT
     run: function () {},
     assert: function () {
       var doc = window.inMemoryDocument;
-      return assertDocumentEquality(doc, gapi.drive.realtime.loadFromJson(doc.toJson()));
+      return assertDocumentEquality(doc, gapi.drive.realtime.loadFromJson(doc.getModel().toJson()));
     }
   })
   .test({
@@ -33,7 +33,7 @@ window.testSuite.load(new TestingClass('Document Import Tests', 'documentImportT
     },
     assert: function () {
       var doc = window.inMemoryDocument;
-      return assertDocumentEquality(doc, gapi.drive.realtime.loadFromJson(doc.toJson()));
+      return assertDocumentEquality(doc, gapi.drive.realtime.loadFromJson(doc.getModel().toJson()));
     }
   })
   .test({
@@ -49,7 +49,7 @@ window.testSuite.load(new TestingClass('Document Import Tests', 'documentImportT
     },
     assert: function () {
       var doc = window.inMemoryDocument;
-      return assertDocumentEquality(doc, gapi.drive.realtime.loadFromJson(doc.toJson()));
+      return assertDocumentEquality(doc, gapi.drive.realtime.loadFromJson(doc.getModel().toJson()));
     }
   })
   .test({
@@ -65,7 +65,7 @@ window.testSuite.load(new TestingClass('Document Import Tests', 'documentImportT
     },
     assert: function () {
       var doc = window.inMemoryDocument;
-      return assertDocumentEquality(doc, gapi.drive.realtime.loadFromJson(doc.toJson()));
+      return assertDocumentEquality(doc, gapi.drive.realtime.loadFromJson(doc.getModel().toJson()));
     }
   })
 .test({
@@ -75,7 +75,7 @@ window.testSuite.load(new TestingClass('Document Import Tests', 'documentImportT
   },
   assert: function () {
     var doc = window.inMemoryDocument;
-    return assertDocumentEquality(doc, gapi.drive.realtime.loadFromJson(doc.toJson()));
+    return assertDocumentEquality(doc, gapi.drive.realtime.loadFromJson(doc.getModel().toJson()));
   }
 })
 .test({
@@ -86,7 +86,7 @@ window.testSuite.load(new TestingClass('Document Import Tests', 'documentImportT
   },
   assert: function () {
     var doc = window.inMemoryDocument;
-    return assertDocumentEquality(doc, gapi.drive.realtime.loadFromJson(doc.toJson()));
+    return assertDocumentEquality(doc, gapi.drive.realtime.loadFromJson(doc.getModel().toJson()));
   }
 })
 .test({
@@ -156,6 +156,6 @@ window.testSuite.load(new TestingClass('Document Import Tests', 'documentImportT
 }));
 
 function assertDocumentEquality(docA, docB) {
-  return docA.toJson() === docB.toJson() &&
-    docA.toJson('myApp', 10) === docB.toJson('myApp', 10);
+  return docA.getModel().toJson() === docB.getModel().toJson() &&
+    docA.getModel().toJson('myApp', 10) === docB.getModel().toJson('myApp', 10);
 }

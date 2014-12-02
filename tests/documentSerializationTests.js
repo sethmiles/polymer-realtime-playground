@@ -41,7 +41,7 @@ window.testSuite.load(new TestingClass('Document Serialization', 'documentSerial
       window.inMemoryDocument.getModel().getRoot().set(DOUBLE_KEY, DOUBLE_VAL);
     },
     assert: function () {
-      var json = JSON.parse(window.inMemoryDocument.toJson());
+      var json = JSON.parse(window.inMemoryDocument.getModel().toJson());
       return json[OBJECT_ID_KEY] == 'root' &&
         json[OBJECT_TYPE_KEY] == 'Map' &&
         json[OBJECT_VALUE_KEY][DOUBLE_KEY][JSON_TYPE] === DOUBLE_VAL &&
@@ -61,7 +61,7 @@ window.testSuite.load(new TestingClass('Document Serialization', 'documentSerial
       model.getRoot().set('looseCycle', map1);
     },
     assert: function () {
-      var json = JSON.parse(window.inMemoryDocument.toJson());
+      var json = JSON.parse(window.inMemoryDocument.getModel().toJson());
       var root = json[OBJECT_VALUE_KEY];
       return inMemoryDocument.getModel().getRoot().get('looseCycle').getId() === root.looseCycle[OBJECT_ID_KEY] &&
         root.looseCycle[OBJECT_TYPE_KEY] === MAP_TYPE_VALUE &&
@@ -83,7 +83,7 @@ window.testSuite.load(new TestingClass('Document Serialization', 'documentSerial
       model.getRoot().set('ref2', ref2);
     },
     assert: function () {
-      var json = JSON.parse(window.inMemoryDocument.toJson());
+      var json = JSON.parse(window.inMemoryDocument.getModel().toJson());
       var root = json[OBJECT_VALUE_KEY];
       var array = root.list[OBJECT_VALUE_KEY];
       var model = window.inMemoryDocument.getModel();
@@ -112,7 +112,7 @@ window.testSuite.load(new TestingClass('Document Serialization', 'documentSerial
     window.inMemoryDocument.getModel().getRoot().set('str', window.inMemoryDocument.getModel().createString('Hello World'));
   },
   assert: function () {
-    var json = JSON.parse(window.inMemoryDocument.toJson());
+    var json = JSON.parse(window.inMemoryDocument.getModel().toJson());
     var root = json[OBJECT_VALUE_KEY];
     var model = window.inMemoryDocument.getModel();
 
@@ -125,7 +125,7 @@ window.testSuite.load(new TestingClass('Document Serialization', 'documentSerial
   description: 'Serialized Document Retains AppId & Revision',
   run: function () {},
   assert: function () {
-    var json = JSON.parse(doc.toJson('666', 3));
+    var json = JSON.parse(doc.getModel().toJson('666', 3));
     return json[APP_ID_KEY] === '666' &&
       json[REVISION_KEY] === 3;
   }
@@ -137,7 +137,7 @@ window.testSuite.load(new TestingClass('Document Serialization', 'documentSerial
     model.getRoot().set('list2', model.createList(['"ha"', { inner: 'testvalue' }]));
   },
   assert: function () {
-    var json = JSON.parse(window.inMemoryDocument.toJson());
+    var json = JSON.parse(window.inMemoryDocument.getModel().toJson());
     var root = json[OBJECT_VALUE_KEY];
     var model = window.inMemoryDocument.getModel();
     var values = root.list2[OBJECT_VALUE_KEY];

@@ -105,7 +105,7 @@
                   </div>
                   <div class="content" hero-id="string-code-body">
                     <p>Collaborative strings are just like normal strings, except that all browser sessions will be notified and updated when the string changes. Events are fired when a collaborative string is modified.</p>
-                    <paper-input floatingLabel multiline disabled?="{{ model.isReadOnly }}" id="stringInput" value="{{ collaborativeString }}" on-keyup="{{ onCollaborativeStringKeyup }}" label="type something..."></paper-input>
+                    <paper-input floatingLabel multiline disabled?="{{ model.isReadOnly }}" id="stringInput" value="{{ collaborativeString }}" on-input="{{ onCollaborativeStringInputChange }}" label="type something..."></paper-input>
                   </div>
                 </div>
               </div>
@@ -236,19 +236,19 @@
                       <tbody>
                         <tr>
                           <td>Name</td>
-                          <td><paper-input id="customNameInput" disabled?="{{ model.isReadOnly }}" on-keyup="{{ onNameKeyup }}" label="name..." value="{{ name }}"></paper-input></td>
+                          <td><paper-input id="customNameInput" disabled?="{{ model.isReadOnly }}" on-input="{{ onNameInputChange }}" label="name..." value="{{ name }}"></paper-input></td>
                         </tr>
                         <tr>
                           <td>Director</td>
-                          <td><paper-input id="customDirectorInput" disabled?="{{ model.isReadOnly }}" on-keyup="{{ onDirectorKeyup }}" label="director..." value="{{ director }}"></paper-input></td>
+                          <td><paper-input id="customDirectorInput" disabled?="{{ model.isReadOnly }}" on-input="{{ onDirectorInputChange }}" label="director..." value="{{ director }}"></paper-input></td>
                         </tr>
                         <tr>
                           <td>Notes</td>
-                          <td><paper-input multiline id="customNotesInput" disabled?="{{ model.isReadOnly }}" on-keyup="{{ onNotesKeyup }}" label="notes..." value="{{ notes }}"></paper-input></td>
+                          <td><paper-input multiline id="customNotesInput" disabled?="{{ model.isReadOnly }}" on-input="{{ onNotesInputChange }}" label="notes..." value="{{ notes }}"></paper-input></td>
                         </tr>
                         <tr>
                           <td>Rating</td>
-                          <td><paper-input id="customRatingInput" disabled?="{{ model.isReadOnly }}" on-keyup="{{ onRatingKeyup }}" label="rating..." value="{{ rating }}"></paper-input></td>
+                          <td><paper-input id="customRatingInput" disabled?="{{ model.isReadOnly }}" on-input="{{ onRatingInputChange }}" label="rating..." value="{{ rating }}"></paper-input></td>
                         </tr>
                       </tbody>
                     </table>
@@ -452,7 +452,7 @@ function onCustomDemoChange (evt) {
   input.value = app.customDemo.director;
 }
 
-function onDirectorKeyup () {
+function onDirectorInputChange () {
   app.customDemo.director = document.querySelector('#directorInput').value;
   // This will fire a change event
 }

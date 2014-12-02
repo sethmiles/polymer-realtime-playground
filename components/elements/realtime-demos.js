@@ -96,7 +96,7 @@ Polymer({
     this.collaborativeString = this.stringDemo.getText();
   },
 
-  onCollaborativeStringKeyup: function (evt) {
+  onCollaborativeStringInputChange: function (evt) {
     this.stringDemo.setText(this.$.stringInput.inputValue);
   },
 
@@ -296,19 +296,19 @@ Polymer({
     this.rating = this.customDemo.rating;
   },
 
-  onNameKeyup: function () {
+  onNameInputChange: function () {
     this.customDemo.name = this.$.customNameInput.inputValue;
   },
 
-  onDirectorKeyup: function () {
+  onDirectorInputChange: function () {
     this.customDemo.director = this.$.customDirectorInput.inputValue;
   },
 
-  onNotesKeyup: function () {
+  onNotesInputChange: function () {
     this.customDemo.notes = this.$.customNotesInput.inputValue;
   },
 
-  onRatingKeyup: function () {
+  onRatingInputChange: function () {
     this.customDemo.rating = this.$.customRatingInput.inputValue;
   },
 
