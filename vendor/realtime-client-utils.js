@@ -12,8 +12,7 @@ Utils.prototype = {
   },
 
   scopes: ['https://www.googleapis.com/auth/drive.install',
-          'https://www.googleapis.com/auth/drive.file',
-          'openid'],
+          'https://www.googleapis.com/auth/drive.file'],
 
   init: function (options) {
     this.mergeOptions(options);

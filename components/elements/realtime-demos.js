@@ -341,8 +341,11 @@ Polymer({
   },
 
   share: function () {
-    this.$.globals.shareClient.setItemIds([this.documentId]);
-    this.$.globals.shareClient.showSettingsDialog();
+    if(!this.shareClient){
+      var shareClient = new gapi.drive.share.ShareClient(this.util.options.appId);
+      shareClient.setItemIds([this.documentId]);
+    }
+    shareClient.showSettingsDialog();
   },
 
   undo: function () {
